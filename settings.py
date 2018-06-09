@@ -58,6 +58,7 @@ font_flags = tcod.FONT_TYPE_GREYSCALE | tcod.FONT_LAYOUT_TCOD
 con = tcod.console_new(MAP_WIDTH, MAP_HEIGHT)
 panel = tcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
 
+boner_dome = Object(0, 0, 'D', 'boner_dome', tcod.yellow)
 dungeon_level = 1
 dungeon_map = []
 fov_map = tcod.map_new(MAP_WIDTH, MAP_HEIGHT)
@@ -69,8 +70,9 @@ key = tcod.Key()
 mouse = tcod.Mouse()
 objects = []
 player = Object(0, 0, '@', 'player', tcod.white)
-player_action = 'fuckin'
+player_action = ''
 stairs_down = Object(0, 0, '>', 'stairs down', tcod.white)
+stairs_up = Object(0, 0, '<', 'stairs up', tcod.white)
 
 
 def init():
@@ -154,21 +156,31 @@ def save_game():
 	file['inventory'] = inventory
 	file['game_messages'] = game_messages
 	file['game_state'] = game_state
-	file['stairs_index'] = objects.index(stairs_down)
+	try:
+		file['stairs_down_index'] = objects.index(stairs_down)
+	except ValueError:
+		file['stairs_down_index'] = None
+	try:
+		file['stairs_up_index'] = objects.index(stairs_up)
+	except ValueError:
+		file['stairs_up_index'] = None
 	file['dungeon_level'] = dungeon_level
 	file.close()
 
 
 def load_game():
-	global dungeon_map, objects, player, inventory, game_messages, game_state, stairs_down, dungeon_level
+	global dungeon_map, objects, player, inventory, game_messages, game_state, stairs_down, stairs_up, dungeon_level
 	file = shelve.open('savegame', 'r')
 	dungeon_map = file['map']
 	objects = file['objects']
 	player = objects[file['player_index']]
 	inventory = file['inventory']
-	game_messages = file['game_msgs']
+	game_messages = file['game_messages']
 	game_state = file['game_state']
-	stairs_down = objects[file['stairs_index']]
+	if file['stairs_down_index'] is not None:
+		stairs_down = objects[file['stairs_down_index']]
+	if file['stairs_up_index'] is not None:
+		stairs_up = objects[file['stairs_up_index']]
 	dungeon_level = file['dungeon_level']
 	file.close()
 

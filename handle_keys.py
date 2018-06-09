@@ -3,7 +3,8 @@ import settings
 
 from menu import msgbox
 from menu import inventory_menu
-from next_level import next_level
+from level_manager import next_level
+from level_manager import previous_level
 
 
 def handle_keys():
@@ -53,6 +54,16 @@ def handle_keys():
 			if key_char == '.' and settings.key.shift:
 				if settings.stairs_down.x == settings.player.x and settings.stairs_down.y == settings.player.y:
 					next_level()
+			if key_char == ',' and settings.key.shift:
+				if settings.stairs_up.x == settings.player.x and settings.stairs_up.y == settings.player.y:
+					if settings.dungeon_level != 1:
+						previous_level()
+					else:
+						if settings.boner_dome in settings.inventory:
+							msgbox("You escape with the Dome of Boners!")
+							return 'exit'
+						else:
+							msgbox("You cannot leave until you have the Dome of Boners")
 			if key_char == 'c':
 				# show character stats
 				level_up_exp = settings.LEVEL_UP_BASE + settings.player.level * settings.LEVEL_UP_FACTOR

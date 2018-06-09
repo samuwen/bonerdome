@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
 		tcod.console_set_default_foreground(0, tcod.light_yellow)
 		tcod.console_print_ex(0, settings.SCREEN_WIDTH // 2, settings.SCREEN_HEIGHT // 2 - 4, tcod.BKGND_NONE, tcod.CENTER,
-			'THE BONER DOME')
+			'Legend of the Boner Dome')
 		tcod.console_print_ex(0, settings.SCREEN_WIDTH // 2, settings.SCREEN_HEIGHT - 2, tcod.BKGND_NONE, tcod.CENTER,
 			'By Jack Chick')
 
@@ -27,7 +27,8 @@ if __name__ == "__main__":
 		elif choice == 1:
 			try:
 				settings.load_game()
-			except:
+			except (KeyError) as err:
+				print("***ERROR: Key not found: " + str(err))
 				msgbox("No savegame found", 24)
 				continue
 			play_game()
