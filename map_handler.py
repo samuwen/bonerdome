@@ -95,6 +95,7 @@ def make_map():
 			item=item_component, always_visible=True)
 		settings.objects.append(settings.boner_dome)
 	place_stairs(new_x, new_y, '>', 'stairs down')
+	settings.save_level_state()
 
 
 # assigns and appends stairs as appropriate

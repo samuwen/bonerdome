@@ -52,9 +52,6 @@ CONFUSE_RANGE = 8
 FIREBALL_RADIUS = 3
 FIREBALL_DAMAGE = 25
 
-font_path = 'assets/fonts/arial10x10.png'
-font_flags = tcod.FONT_TYPE_GREYSCALE | tcod.FONT_LAYOUT_TCOD
-
 con = tcod.console_new(MAP_WIDTH, MAP_HEIGHT)
 panel = tcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
 
@@ -76,6 +73,8 @@ stairs_up = Object(0, 0, '<', 'stairs up', tcod.white)
 
 
 def init():
+	font_path = 'assets/fonts/arial10x10.png'
+	font_flags = tcod.FONT_TYPE_GREYSCALE | tcod.FONT_LAYOUT_TCOD
 	tcod.console_set_custom_font(font_path, font_flags)
 
 	window_title = "Roguelike"
@@ -139,11 +138,17 @@ def get_all_equipped(obj):
 
 def get_names_under_mouse():
 	# return a string with the names of all objects under the mouse
+	# if objects are combatants, we get the direction they are facing too
 	(x, y) = (mouse.cx, mouse.cy)
 
-	# create a list of all visible objects at the mouse position
-	names = [obj.name for obj in objects if obj.x == x and obj.y == y and
-		tcod.map_is_in_fov(fov_map, obj.x, obj.y)]
+	names = []
+	for obj in objects:
+		if obj.x == x and obj.y == y and tcod.map_is_in_fov(fov_map, obj.x, obj.y):
+			if obj.fighter:
+				names.append(obj.name + " (facing: " + obj.direction + ")")
+			else:
+				names.append(obj.name)
+
 	names = ', '.join(names)
 	return names.capitalize()
 
@@ -168,8 +173,25 @@ def save_game():
 	file.close()
 
 
+def save_level_state():
+	file = shelve.open('save/level' + str(dungeon_level), 'n')
+	file['map'] = dungeon_map
+	file['objects'] = objects
+	file['player_index'] = objects.index(player)
+	try:
+		file['stairs_down_index'] = objects.index(stairs_down)
+	except ValueError:
+		file['stairs_down_index'] = None
+	try:
+		file['stairs_up_index'] = objects.index(stairs_up)
+	except ValueError:
+		file['stairs_up_index'] = None
+	file.close()
+
+
 def load_game():
 	global dungeon_map, objects, player, inventory, game_messages, game_state, stairs_down, stairs_up, dungeon_level
+	global map_dict
 	file = shelve.open('savegame', 'r')
 	dungeon_map = file['map']
 	objects = file['objects']
@@ -185,3 +207,17 @@ def load_game():
 	file.close()
 
 	initialize_fov()
+
+
+def load_level_state():
+	global dungeon_map, objects, player, inventory, game_messages, game_state, stairs_down, stairs_up, dungeon_level
+	global map_dict
+	file = shelve.open('save/level' + str(dungeon_level), 'r')
+	dungeon_map = file['map']
+	objects = file['objects']
+	player = objects[file['player_index']]
+	if file['stairs_down_index'] is not None:
+		stairs_down = objects[file['stairs_down_index']]
+	if file['stairs_up_index'] is not None:
+		stairs_up = objects[file['stairs_up_index']]
+	file.close()

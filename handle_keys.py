@@ -90,6 +90,7 @@ def player_move_or_attack(dx, dy):
 	# attack if target found, otherwise move
 	if target is not None:
 		settings.player.fighter.attack(target)
+		settings.player.set_direction(dx, dy)
 	else:
 		settings.player.move(dx, dy)
 		settings.fov_recompute = True

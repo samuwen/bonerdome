@@ -11,7 +11,7 @@ class BasicMonster:
 		monster = self.owner
 		if tcod.map_is_in_fov(settings.fov_map, monster.x, monster.y):
 			if monster.distance_to(settings.player) >= 2:
-				monster.move_towards(settings.player.x, settings.player.y)
+				monster.move_astar(settings.player)
 			elif settings.player.fighter.hp > 0:
 				monster.fighter.attack(settings.player)
 

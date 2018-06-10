@@ -18,6 +18,7 @@ def new_game():
 	settings.dungeon_level = 1
 
 	make_map()
+	settings.save_level_state()
 	initialize_fov()
 
 	settings.game_state = 'playing'
