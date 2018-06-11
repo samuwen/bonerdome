@@ -5,6 +5,7 @@ import skills
 from menu import msgbox
 from menu import inventory_menu
 from menu import skills_menu
+from message import message
 from level_manager import next_level
 from level_manager import previous_level
 from targetting import combatant_is_adjacent
@@ -20,25 +21,9 @@ def handle_keys():
 
 	if settings.game_state == 'playing':
 		# movement keys
-		if settings.key.vk == tcod.KEY_UP or settings.key.vk == tcod.KEY_KP8:
-			player_move_or_attack(0, -1)
-		elif settings.key.vk == tcod.KEY_KP9:
-			player_move_or_attack(1, -1)
-		elif settings.key.vk == tcod.KEY_RIGHT or settings.key.vk == tcod.KEY_KP6:
-			player_move_or_attack(1, 0)
-		elif settings.key.vk == tcod.KEY_KP3:
-			player_move_or_attack(1, 1)
-		elif settings.key.vk == tcod.KEY_DOWN or settings.key.vk == tcod.KEY_KP2:
-			player_move_or_attack(0, 1)
-		elif settings.key.vk == tcod.KEY_KP1:
-			player_move_or_attack(-1, 1)
-		elif settings.key.vk == tcod.KEY_LEFT or settings.key.vk == tcod.KEY_KP4:
-			player_move_or_attack(-1, 0)
-		elif settings.key.vk == tcod.KEY_KP7:
-			player_move_or_attack(-1, -1)
-		elif settings.key.vk == tcod.KEY_KP5:
-			pass
-		else:
+		try:
+			return settings.keycode_to_direction_tuple_map[settings.key.vk]
+		except KeyError:
 			key_char = chr(settings.key.c)
 
 			if key_char == 'g':
@@ -53,10 +38,9 @@ def handle_keys():
 			if key_char == 's':
 				chosen_skill = skills_menu('Press the key next to the skill to use it, or any other key to cancel.\n')
 				if chosen_skill is not None:
-					if chosen_skill == 'smash':
-						skills.smash(settings.player)
-					elif chosen_skill == 'bash':
-						skills.bash(settings.player)
+					for spell in settings.spells:
+						if spell == chosen_skill:
+							spell.use(settings.player)
 			if key_char == 'd':
 				chosen_item = inventory_menu("Press the letter next to the item to drop it.\n")
 				if chosen_item is not None:
@@ -86,6 +70,8 @@ def handle_keys():
 
 
 def player_move_or_attack(dx, dy):
+	if (dx, dy) == (0, 0):
+		return
 	# coordinates to which the player is moving or attacking
 	x = settings.player.x + dx
 	y = settings.player.y + dy
@@ -100,3 +86,14 @@ def player_move_or_attack(dx, dy):
 	else:
 		settings.player.move(dx, dy)
 		settings.fov_recompute = True
+
+
+def prompt_user_for_direction():
+	keypress = tcod.console_wait_for_keypress(True)
+	if keypress.vk not in settings.keycode_to_direction_tuple_map:
+		message("Aborted")
+		return
+	direction = settings.keycode_to_direction_tuple_map[keypress.vk]
+	if type(direction) is not tuple:
+		return None
+	return direction

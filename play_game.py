@@ -3,6 +3,7 @@ import settings
 
 from check_level_up import check_level_up
 from handle_keys import handle_keys
+from handle_keys import player_move_or_attack
 from render import render_all
 
 
@@ -25,6 +26,8 @@ def play_game():
 			obj.clear()
 
 		settings.player_action = handle_keys()
+		if type(settings.player_action) is tuple:
+			player_move_or_attack(*settings.player_action)
 		if settings.player_action == 'exit':
 			settings.save_game()
 			break
@@ -33,3 +36,5 @@ def play_game():
 			for obj in settings.objects:
 				if obj.ai:
 					obj.ai.take_turn()
+			for spell in settings.spells:
+				spell.advance_cooldown_timers()

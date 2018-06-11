@@ -1,5 +1,6 @@
 import libtcodpy as tcod
 import math
+import random
 import settings
 import utilities
 
@@ -9,8 +10,8 @@ from Item import Item
 class Object:
 	# This is a generic object class. Character, enemy, item, etc
 	# Objects always have a representative character on the screen
-	def __init__(self, x, y, char, name, color, blocks=False, combatant=None, ai=None, item=None,
-		always_visible=False, equipment=None, direction='left'):
+	def __init__(self, x, y, char, name, color, direction=None, blocks=False, combatant=None, ai=None,
+		item=None, always_visible=False, equipment=None):
 		self.x = x
 		self.y = y
 		self.char = char
@@ -38,6 +39,8 @@ class Object:
 			self.item.owner = self
 
 		self.direction = direction
+		if direction is None:
+			self.direction = random.choice(['up', 'right', 'left', 'down'])
 
 	def move(self, dx, dy):
 		if not settings.is_blocked(self.x + dx, self.y + dy):

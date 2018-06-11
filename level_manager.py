@@ -27,5 +27,4 @@ def previous_level():
 	settings.save_level_state()
 	settings.dungeon_level -= 1
 	settings.load_level_state()
-	# settings.dungeon_map = settings.map_dict['d_map' + str(settings.dungeon_level)]
 	initialize_fov()

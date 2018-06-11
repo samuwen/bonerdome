@@ -52,8 +52,11 @@ def render_all():
 		y += 1
 
 	# show player's stats
-	render_bar(1, 1, settings.BAR_WIDTH, "HP", settings.player.combatant.hp, settings.player.combatant.max_hp,
-		tcod.light_red, tcod.darker_red)
+	try:
+		render_bar(1, 1, settings.BAR_WIDTH, "HP", settings.player.combatant.hp, settings.player.combatant.max_hp,
+			tcod.light_red, tcod.darker_red)
+	except AttributeError as err:
+		print(err)
 	tcod.console_print_ex(settings.panel, 1, 3, tcod.BKGND_NONE, tcod.LEFT, 'Dungeon level ' +
 		str(settings.dungeon_level))
 	tcod.console_set_default_foreground(settings.panel, tcod.light_gray)

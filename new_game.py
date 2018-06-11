@@ -9,13 +9,19 @@ from map_handler import make_map
 from message import message
 from Object import Object
 from player_death import player_death
+from Spell import Spell
+
+import skills
 
 
 def new_game():
+	settings.init_new_game()
+
 	profession_component = Fighter()
+	smash = Spell(skills.smash, 0, 1, 'smash', 20, 5, "smashed enemy", "failed to smash enemy")
 	combatant_component = Combatant(hp=100, defense=1, power=2, xp=0, death_function=player_death, profession=profession_component)
 	settings.player = Object(0, 0, '@', 'player', tcod.white, blocks=True, combatant=combatant_component)
-	settings.skills = settings.player.combatant.profession.skills
+	settings.spells = [smash]
 
 	settings.player.level = 1
 	settings.dungeon_level = 1

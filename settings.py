@@ -3,6 +3,7 @@ import shelve
 
 from initialize_fov import initialize_fov
 from Object import Object
+from pathlib import Path
 
 # Actual size of the displayed screen
 SCREEN_WIDTH = 80
@@ -52,9 +53,11 @@ CONFUSE_RANGE = 8
 FIREBALL_RADIUS = 3
 FIREBALL_DAMAGE = 25
 
+# Consoles
 con = tcod.console_new(MAP_WIDTH, MAP_HEIGHT)
 panel = tcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
 
+# Runtime global variables
 boner_dome = Object(0, 0, 'D', 'boner_dome', tcod.yellow)
 dungeon_level = 1
 dungeon_map = []
@@ -69,9 +72,25 @@ objects = []
 player = Object(0, 0, '@', 'player', tcod.white)
 player_action = ''
 profession = ''
-skills = []
+spells = []
 stairs_down = Object(0, 0, '>', 'stairs down', tcod.white)
 stairs_up = Object(0, 0, '<', 'stairs up', tcod.white)
+
+keycode_to_direction_tuple_map = {
+	tcod.KEY_KP8: (0, -1),
+	tcod.KEY_UP: (0, -1),
+	tcod.KEY_KP9: (1, -1),
+	tcod.KEY_RIGHT: (1, 0),
+	tcod.KEY_KP6: (1, 0),
+	tcod.KEY_KP3: (1, 1),
+	tcod.KEY_DOWN: (0, 1),
+	tcod.KEY_KP2: (0, 1),
+	tcod.KEY_KP1: (-1, 1),
+	tcod.KEY_LEFT: (-1, 0),
+	tcod.KEY_KP4: (-1, 0),
+	tcod.KEY_KP7: (-1, -1),
+	tcod.KEY_KP5: (0, 0)
+}
 
 
 def init():
@@ -84,6 +103,22 @@ def init():
 	tcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, window_title, fullscreen)
 
 	tcod.sys_set_fps(LIMIT_FPS)
+
+
+def init_new_game():
+	global dungeon_map, game_messages, inventory, objects, player_action, profession
+	dungeon_map = []
+	game_messages = []
+	inventory = []
+	objects = []
+	player_action = ''
+	profession = ''
+
+	# Deletes all of the existing level states
+	p = Path('.')
+	folder = p / 'save'
+	for file in folder.iterdir():
+		file.unlink()
 
 
 def is_blocked(x, y):
@@ -162,6 +197,7 @@ def save_game():
 
 
 def save_level_state():
+	print("Saving level state")
 	file = shelve.open('save/level' + str(dungeon_level), 'n')
 	file['map'] = dungeon_map
 	file['objects'] = objects

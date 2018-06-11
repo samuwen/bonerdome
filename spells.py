@@ -7,7 +7,7 @@ from targetting import target_monster
 from targetting import target_tile
 
 
-def cast_heal(obj, target):
+def cast_heal(obj):
 	if obj.combatant.hp == obj.combatant.max_hp:
 		return 'cancelled'
 	obj.combatant.heal(settings.HEAL_AMOUNT)

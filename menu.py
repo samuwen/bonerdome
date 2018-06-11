@@ -67,10 +67,13 @@ def inventory_menu(header):
 
 def skills_menu(header):
 	options = []
-	skills = settings.skills
-	for skill in skills:
-		options.append(skill)
+	spells = settings.spells
+	for skill in spells:
+		avail = ""
+		if skill.current_cooldown_time > 0:
+			avail = " (" + str(skill.current_cooldown_time) + " turns until ready)"
+		options.append(skill.name + avail)
 	index = menu(header, options, settings.INVENTORY_WIDTH)
-	if index is None or len(skills) == 0:
+	if index is None or len(spells) == 0:
 		return None
-	return skills[index]
+	return spells[index]
