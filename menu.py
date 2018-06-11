@@ -63,3 +63,14 @@ def inventory_menu(header):
 	if index is None or len(settings.inventory) == 0:
 		return None
 	return settings.inventory[index].item
+
+
+def skills_menu(header):
+	options = []
+	skills = settings.skills
+	for skill in skills:
+		options.append(skill)
+	index = menu(header, options, settings.INVENTORY_WIDTH)
+	if index is None or len(skills) == 0:
+		return None
+	return skills[index]

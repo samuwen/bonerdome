@@ -4,7 +4,7 @@ import settings
 import spells
 
 from Equipment import Equipment
-from Fighter import Fighter
+from Combatant import Combatant
 from Item import Item
 from monster_death import monster_death
 from Object import Object
@@ -37,12 +37,12 @@ def place_objects(room):
 		if not settings.is_blocked(x, y):
 			choice = random_choice(monster_chances)
 			if choice == 'orc':
-				fighter_component = Fighter(hp=20, defense=0, power=4, xp=35, death_function=monster_death)
-				monster = Object(x, y, 'o', 'orc', tcod.desaturated_green, blocks=True, fighter=fighter_component,
+				combatant_component = Combatant(hp=20, defense=0, power=4, xp=35, death_function=monster_death)
+				monster = Object(x, y, 'o', 'orc', tcod.desaturated_green, blocks=True, combatant=combatant_component,
 					ai=ai_component)
 			elif choice == 'troll':
-				fighter_component = Fighter(hp=30, defense=2, power=8, xp=100, death_function=monster_death)
-				monster = Object(x, y, 'T', 'troll', tcod.darkest_green, blocks=True, fighter=fighter_component,
+				combatant_component = Combatant(hp=30, defense=2, power=8, xp=100, death_function=monster_death)
+				monster = Object(x, y, 'T', 'troll', tcod.darkest_green, blocks=True, combatant=combatant_component,
 					ai=ai_component)
 
 			settings.objects.append(monster)

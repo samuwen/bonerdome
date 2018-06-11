@@ -1,8 +1,9 @@
 import libtcodpy as tcod
-import menu
-from menu import msgbox
 import settings
 
+from create_character import choose_job
+from menu import menu
+from menu import msgbox
 from new_game import new_game
 from play_game import play_game
 
@@ -19,9 +20,10 @@ if __name__ == "__main__":
 		tcod.console_print_ex(0, settings.SCREEN_WIDTH // 2, settings.SCREEN_HEIGHT - 2, tcod.BKGND_NONE, tcod.CENTER,
 			'By Jack Chick')
 
-		choice = menu.menu('', ['Play a new game', 'Continue last game', 'Quit'], 24)
+		choice = menu('', ['Play a new game', 'Continue last game', 'Quit'], 24)
 
 		if choice == 0:
+			choose_job()
 			new_game()
 			play_game()
 		elif choice == 1:

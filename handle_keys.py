@@ -1,10 +1,13 @@
 import libtcodpy as tcod
 import settings
+import skills
 
 from menu import msgbox
 from menu import inventory_menu
+from menu import skills_menu
 from level_manager import next_level
 from level_manager import previous_level
+from targetting import combatant_is_adjacent
 
 
 def handle_keys():
@@ -47,6 +50,13 @@ def handle_keys():
 				chosen_item = inventory_menu('Press the key next to the item to use it, or any other key to cancel.\n')
 				if chosen_item is not None:
 					chosen_item.use(settings.player)
+			if key_char == 's':
+				chosen_skill = skills_menu('Press the key next to the skill to use it, or any other key to cancel.\n')
+				if chosen_skill is not None:
+					if chosen_skill == 'smash':
+						skills.smash(settings.player)
+					elif chosen_skill == 'bash':
+						skills.bash(settings.player)
 			if key_char == 'd':
 				chosen_item = inventory_menu("Press the letter next to the item to drop it.\n")
 				if chosen_item is not None:
@@ -68,9 +78,9 @@ def handle_keys():
 				# show character stats
 				level_up_exp = settings.LEVEL_UP_BASE + settings.player.level * settings.LEVEL_UP_FACTOR
 				msgbox("Character information\n\nLevel: " + str(settings.player.level) + "\nExperience: " +
-					str(settings.player.fighter.xp) + "\nExperience to level up:" + str(level_up_exp - settings.player.fighter.xp) +
-					"\n\nMaximum Hp: " + str(settings.player.fighter.max_hp) + "\nAttack: " + str(settings.player.fighter.power) +
-					"\nDefense: " + str(settings.player.fighter.defense), settings.CHARACTER_SCREEN_WIDTH)
+					str(settings.player.combatant.xp) + "\nExperience to level up:" + str(level_up_exp - settings.player.combatant.xp) +
+					"\n\nMaximum Hp: " + str(settings.player.combatant.max_hp) + "\nAttack: " + str(settings.player.combatant.power) +
+					"\nDefense: " + str(settings.player.combatant.defense), settings.CHARACTER_SCREEN_WIDTH)
 
 			return 'didnt-take-turn'
 
@@ -81,15 +91,11 @@ def player_move_or_attack(dx, dy):
 	y = settings.player.y + dy
 
 	# try to find an attackable object
-	target = None
-	for obj in settings.objects:
-		if obj.fighter and obj.x == x and obj.y == y:
-			target = obj
-			break
+	target = combatant_is_adjacent(x, y)
 
 	# attack if target found, otherwise move
 	if target is not None:
-		settings.player.fighter.attack(target)
+		settings.player.combatant.attack(target)
 		settings.player.set_direction(dx, dy)
 	else:
 		settings.player.move(dx, dy)

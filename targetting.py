@@ -30,5 +30,29 @@ def target_monster(max_range):
 			return None
 
 		for obj in settings.objects:
-			if obj.x == x and obj.y == y and obj.fighter and obj != settings.player:
+			if obj.x == x and obj.y == y and obj.combatant and obj != settings.player:
 				return obj
+
+
+def combatant_is_adjacent(x, y):
+	target = None
+	for obj in settings.objects:
+		if obj.combatant and obj.x == x and obj.y == y:
+			target = obj
+			return target
+	return None
+
+
+def closest_monster(max_range):
+	# find closest enemy, up to a maximum range, and in the player's FOV
+	closest_enemy = None
+	closest_dist = max_range + 1  # start with slightly more than maximum range
+
+	for obj in settings.objects:
+		if obj.combatant and not obj == settings.player and tcod.map_is_in_fov(settings.fov_map,
+			obj.x, obj.y):
+			dist = settings.player.distance_to(obj)
+			if dist < closest_dist:  # it's closer, so remember it
+				closest_enemy = obj
+				closest_dist = dist
+	return closest_enemy

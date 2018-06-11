@@ -52,7 +52,7 @@ def render_all():
 		y += 1
 
 	# show player's stats
-	render_bar(1, 1, settings.BAR_WIDTH, "HP", settings.player.fighter.hp, settings.player.fighter.max_hp,
+	render_bar(1, 1, settings.BAR_WIDTH, "HP", settings.player.combatant.hp, settings.player.combatant.max_hp,
 		tcod.light_red, tcod.darker_red)
 	tcod.console_print_ex(settings.panel, 1, 3, tcod.BKGND_NONE, tcod.LEFT, 'Dungeon level ' +
 		str(settings.dungeon_level))

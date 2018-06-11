@@ -3,14 +3,14 @@ import libtcodpy as tcod
 import settings
 
 from message import message
-from target_tile import target_monster
-from target_tile import target_tile
+from targetting import target_monster
+from targetting import target_tile
 
 
-def cast_heal(obj):
-	if obj.fighter.hp == obj.fighter.max_hp:
+def cast_heal(obj, target):
+	if obj.combatant.hp == obj.combatant.max_hp:
 		return 'cancelled'
-	obj.fighter.heal(settings.HEAL_AMOUNT)
+	obj.combatant.heal(settings.HEAL_AMOUNT)
 	return 'success'
 
 
@@ -23,7 +23,7 @@ def cast_lightning():
 	# zap it
 	message("A lightning bolt strikes the " + monster.name + " with a loud thunder! The damage is " +
 		str(settings.LIGHTNING_DAMAGE) + " hit points.", tcod.light_blue)
-	monster.fighter.take_damage(settings.LIGHTNING_DAMAGE)
+	monster.combatant.take_damage(settings.LIGHTNING_DAMAGE)
 
 
 def cast_confuse():
@@ -47,6 +47,6 @@ def cast_fireball():
 	message("The fireball explodes! Burning everything within " + str(settings.FIREBALL_RADIUS) + " tiles!", tcod.orange)
 
 	for obj in settings.objects:
-		if obj.distance(x, y) <= settings.FIREBALL_RADIUS and obj.fighter:
+		if obj.distance(x, y) <= settings.FIREBALL_RADIUS and obj.combatant:
 			message("The " + obj.name + " gets burned for " + str(settings.FIREBALL_DAMAGE) + " hit points.", tcod.red)
-			obj.fighter.take_damage(settings.FIREBALL_DAMAGE)
+			obj.combatant.take_damage(settings.FIREBALL_DAMAGE)

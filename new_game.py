@@ -1,6 +1,7 @@
 import libtcodpy as tcod
 import settings
 
+from Combatant import Combatant
 from Equipment import Equipment
 from Fighter import Fighter
 from initialize_fov import initialize_fov
@@ -11,8 +12,10 @@ from player_death import player_death
 
 
 def new_game():
-	fighter_component = Fighter(hp=100, defense=1, power=2, xp=0, death_function=player_death)
-	settings.player = Object(0, 0, '@', 'player', tcod.white, blocks=True, fighter=fighter_component)
+	profession_component = Fighter()
+	combatant_component = Combatant(hp=100, defense=1, power=2, xp=0, death_function=player_death, profession=profession_component)
+	settings.player = Object(0, 0, '@', 'player', tcod.white, blocks=True, combatant=combatant_component)
+	settings.skills = settings.player.combatant.profession.skills
 
 	settings.player.level = 1
 	settings.dungeon_level = 1

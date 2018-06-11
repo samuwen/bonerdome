@@ -9,7 +9,7 @@ from Item import Item
 class Object:
 	# This is a generic object class. Character, enemy, item, etc
 	# Objects always have a representative character on the screen
-	def __init__(self, x, y, char, name, color, blocks=False, fighter=None, ai=None, item=None,
+	def __init__(self, x, y, char, name, color, blocks=False, combatant=None, ai=None, item=None,
 		always_visible=False, equipment=None, direction='left'):
 		self.x = x
 		self.y = y
@@ -19,9 +19,9 @@ class Object:
 		self.blocks = blocks
 		self.always_visible = always_visible
 
-		self.fighter = fighter
-		if self.fighter:
-			self.fighter.owner = self
+		self.combatant = combatant
+		if self.combatant:
+			self.combatant.owner = self
 
 		self.ai = ai
 		if self.ai:

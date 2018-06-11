@@ -68,6 +68,8 @@ mouse = tcod.Mouse()
 objects = []
 player = Object(0, 0, '@', 'player', tcod.white)
 player_action = ''
+profession = ''
+skills = []
 stairs_down = Object(0, 0, '>', 'stairs down', tcod.white)
 stairs_up = Object(0, 0, '<', 'stairs up', tcod.white)
 
@@ -103,20 +105,6 @@ def get_equipped_in_slot(slot):
 	return None
 
 
-def closest_monster(max_range):
-	# find closest enemy, up to a maximum range, and in the player's FOV
-	closest_enemy = None
-	closest_dist = max_range + 1  # start with slightly more than maximum range
-
-	for obj in objects:
-		if obj.fighter and not obj == player and tcod.map_is_in_fov(fov_map, obj.x, obj.y):
-			dist = player.distance_to(obj)
-			if dist < closest_dist:  # it's closer, so remember it
-				closest_enemy = obj
-				closest_dist = dist
-	return closest_enemy
-
-
 def from_dungeon_level(table):
 	# returns a value that depends on level. the table specifies what occurs at any given level
 	for (value, level) in reversed(table):
@@ -144,7 +132,7 @@ def get_names_under_mouse():
 	names = []
 	for obj in objects:
 		if obj.x == x and obj.y == y and tcod.map_is_in_fov(fov_map, obj.x, obj.y):
-			if obj.fighter:
+			if obj.combatant:
 				names.append(obj.name + " (facing: " + obj.direction + ")")
 			else:
 				names.append(obj.name)
