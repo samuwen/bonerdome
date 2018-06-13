@@ -72,7 +72,7 @@ objects = []
 player = Object(0, 0, '@', 'player', tcod.white)
 player_action = ''
 profession = ''
-spells = []
+abilities = []
 stairs_down = Object(0, 0, '>', 'stairs down', tcod.white)
 stairs_up = Object(0, 0, '<', 'stairs up', tcod.white)
 
@@ -197,7 +197,6 @@ def save_game():
 
 
 def save_level_state():
-	print("Saving level state")
 	file = shelve.open('save/level' + str(dungeon_level), 'n')
 	file['map'] = dungeon_map
 	file['objects'] = objects

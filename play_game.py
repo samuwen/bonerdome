@@ -36,5 +36,6 @@ def play_game():
 			for obj in settings.objects:
 				if obj.ai:
 					obj.ai.take_turn()
-			for spell in settings.spells:
-				spell.advance_cooldown_timers()
+				if obj.combatant:
+					for ability in obj.combatant.abilities:
+						ability.advance_cooldown_timer()

@@ -1,29 +1,27 @@
 import libtcodpy as tcod
 import settings
 
+from create_character import choose_job
 from Combatant import Combatant
 from Equipment import Equipment
-from Fighter import Fighter
+from Profession import Profession
 from initialize_fov import initialize_fov
 from map_handler import make_map
 from message import message
 from Object import Object
 from player_death import player_death
-from Spell import Spell
-
-import skills
 
 
 def new_game():
 	settings.init_new_game()
 
-	profession_component = Fighter()
-	smash = Spell(skills.smash, 0, 1, 'smash', 20, 5, "smashed enemy", "failed to smash enemy")
-	combatant_component = Combatant(hp=100, defense=1, power=2, xp=0, death_function=player_death, profession=profession_component)
-	settings.player = Object(0, 0, '@', 'player', tcod.white, blocks=True, combatant=combatant_component)
-	settings.spells = [smash]
+	choose_job()
 
-	settings.player.level = 1
+	profession_component = Profession(profession=settings.profession)
+	combatant_component = Combatant(hp=100, defense=1, power=2, xp=0, level=1, death_function=player_death,
+		profession=profession_component)
+	settings.player = Object(0, 0, '@', 'player', tcod.white, blocks=True, combatant=combatant_component)
+	settings.player.combatant.profession.get_abilities_for_level()
 	settings.dungeon_level = 1
 
 	make_map()

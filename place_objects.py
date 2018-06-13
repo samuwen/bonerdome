@@ -1,7 +1,7 @@
 import ai
 import libtcodpy as tcod
 import settings
-import spells
+import abilities
 
 from Equipment import Equipment
 from Combatant import Combatant
@@ -37,11 +37,11 @@ def place_objects(room):
 		if not settings.is_blocked(x, y):
 			choice = random_choice(monster_chances)
 			if choice == 'orc':
-				combatant_component = Combatant(hp=20, defense=0, power=4, xp=35, death_function=monster_death)
+				combatant_component = Combatant(hp=20, defense=0, power=4, xp=35, level=1, death_function=monster_death)
 				monster = Object(x, y, 'o', 'orc', tcod.desaturated_green, blocks=True, combatant=combatant_component,
 					ai=ai_component)
 			elif choice == 'troll':
-				combatant_component = Combatant(hp=30, defense=2, power=8, xp=100, death_function=monster_death)
+				combatant_component = Combatant(hp=30, defense=2, power=8, xp=100, level=1, death_function=monster_death)
 				monster = Object(x, y, 'T', 'troll', tcod.darkest_green, blocks=True, combatant=combatant_component,
 					ai=ai_component)
 
@@ -55,21 +55,21 @@ def place_objects(room):
 		choice = random_choice(item_chances)
 		if choice == 'heal':
 			# create a healing potion 70% chance
-			item_component = Item(use_function=spells.cast_heal, succ_message="Using healing potion",
+			item_component = Item(use_function=abilities.cast_heal, succ_message="Using healing potion",
 				fail_message="Already at max health!")
 			item = Object(x, y, '!', 'healing potion', tcod.violet, item=item_component, always_visible=True)
 		elif choice == 'lightning':
 			# create a lightning bolt scroll 10% chance
-			item_component = Item(use_function=spells.cast_lightning, succ_message="Casting lightning bolt!",
+			item_component = Item(use_function=abilities.cast_lightning, succ_message="Casting lightning bolt!",
 				fail_message="This failed for some reason")
 			item = Object(x, y, '#', 'scroll of lightning bolt', tcod.light_yellow, item=item_component, always_visible=True)
 		elif choice == 'fireball':
 			# create a fireball scroll 10% chance
-			item_component = Item(use_function=spells.cast_fireball)
+			item_component = Item(use_function=abilities.cast_fireball)
 			item = Object(x, y, '#', 'scroll of fireball', tcod.light_orange, item=item_component, always_visible=True)
 		elif choice == 'confuse':
 			# create a confuse scroll, 10% chance
-			item_component = Item(use_function=spells.cast_confuse)
+			item_component = Item(use_function=abilities.cast_confuse)
 			item = Object(x, y, '#', 'scroll of confusion', tcod.white, item=item_component, always_visible=True)
 		elif choice == 'sword':
 			equipment_component = Equipment(slot='right hand', power_bonus=3)

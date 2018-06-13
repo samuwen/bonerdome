@@ -1,10 +1,10 @@
 import libtcodpy as tcod
 import settings
-import skills
+import abilities
 
 from menu import msgbox
 from menu import inventory_menu
-from menu import skills_menu
+from menu import abilities_menu
 from message import message
 from level_manager import next_level
 from level_manager import previous_level
@@ -36,11 +36,11 @@ def handle_keys():
 				if chosen_item is not None:
 					chosen_item.use(settings.player)
 			if key_char == 's':
-				chosen_skill = skills_menu('Press the key next to the skill to use it, or any other key to cancel.\n')
-				if chosen_skill is not None:
-					for spell in settings.spells:
-						if spell == chosen_skill:
-							spell.use(settings.player)
+				chosen_ability = abilities_menu('Press the key next to the skill to use it, or any other key to cancel.\n')
+				if chosen_ability is not None:
+					for ability in settings.player.combatant.abilities:
+						if ability == chosen_ability:
+							ability.use(settings.player)
 			if key_char == 'd':
 				chosen_item = inventory_menu("Press the letter next to the item to drop it.\n")
 				if chosen_item is not None:

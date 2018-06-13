@@ -65,15 +65,15 @@ def inventory_menu(header):
 	return settings.inventory[index].item
 
 
-def skills_menu(header):
+def abilities_menu(header):
 	options = []
-	spells = settings.spells
-	for skill in spells:
+	abilities = settings.player.combatant.abilities
+	for ability in abilities:
 		avail = ""
-		if skill.current_cooldown_time > 0:
-			avail = " (" + str(skill.current_cooldown_time) + " turns until ready)"
-		options.append(skill.name + avail)
+		if ability.current_cooldown_time > 0:
+			avail = " (" + str(ability.current_cooldown_time) + " turns until ready)"
+		options.append(ability.name + avail)
 	index = menu(header, options, settings.INVENTORY_WIDTH)
-	if index is None or len(spells) == 0:
+	if index is None or len(abilities) == 0:
 		return None
-	return spells[index]
+	return abilities[index]

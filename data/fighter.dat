@@ -1,0 +1,2 @@
+smash = {'use_function': abilities.smash,'cost': 0,'distance': 1,'name': 'smash','damage': 20,'cooldown_time': 5,'succ_message': "smashed enemy",'fail_message': 'failed to smash enemy'}
+bash = {'use_function': abilities.bash,'cost': 0,'distance': 1,'name': 'bash','damage': 20,'cooldown_time': 5,'succ_message': 'bashed enemy','fail_message': 'failed to bash enemy'}

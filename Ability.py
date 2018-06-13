@@ -3,7 +3,7 @@ import libtcodpy as tcod
 from message import message
 
 
-class Spell:
+class Ability:
 	def __init__(self, use_function, cost, distance, name, damage=0, cooldown_time=0, succ_message="success",
 		fail_message="fail"):
 		self.use_function = use_function
@@ -29,8 +29,11 @@ class Spell:
 				self.current_cooldown_time = self.cooldown_time
 				message(self.succ_message, tcod.light_green)
 
-	def advance_cooldown_timers(self):
+	def advance_cooldown_timer(self):
 		if self.current_cooldown_time < 0:
 			raise ValueError("Cooldown times cannot be negative")
-		if self.current_cooldown_time > 0:
+		if self.ability_is_on_cooldown():
 			self.current_cooldown_time -= 1
+
+	def ability_is_on_cooldown(self):
+		return self.current_cooldown_time > 0

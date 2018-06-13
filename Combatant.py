@@ -6,15 +6,18 @@ from message import message
 
 class Combatant:
 	# combat-related properties and methods(monster, player, NPC)
-	def __init__(self, hp, defense, power, xp, death_function=None, profession=None):
+	def __init__(self, hp, defense, power, xp, level, death_function=None, profession=None):
 		self._base_max_hp = hp
 		self.hp = hp
 		self._base_defense = defense
 		self._base_power = power
 		self.xp = xp
+		self.level = level
 		self.death_function = death_function
-
 		self.profession = profession
+		if self.profession:
+			self.profession.owner = self
+		self.abilities = []
 
 	def attack(self, target):
 		# a simple formula for attack damage
