@@ -1,6 +1,5 @@
 import libtcodpy as tcod
 import settings
-import abilities
 
 from menu import msgbox
 from menu import inventory_menu
@@ -97,3 +96,9 @@ def prompt_user_for_direction():
 	if type(direction) is not tuple:
 		return None
 	return direction
+
+
+def is_key_pressed():
+	if settings.key.vk != tcod.KEY_NONE:
+		return True
+	return False

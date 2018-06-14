@@ -55,6 +55,7 @@ FIREBALL_DAMAGE = 25
 
 # Consoles
 con = tcod.console_new(MAP_WIDTH, MAP_HEIGHT)
+targeting = tcod.console_new(MAP_WIDTH, MAP_HEIGHT)
 panel = tcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
 
 # Runtime global variables

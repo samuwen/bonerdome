@@ -1,6 +1,21 @@
 import colors
+import handle_keys
 import libtcodpy as tcod
 import settings
+
+render_variables = {
+	'oldx': settings.mouse.cx,
+	'oldy': settings.mouse.cy,
+	'highlighting_enabled': False
+}
+
+
+def get_render_variable(k):
+	return render_variables[k]
+
+
+def set_render_variable(k, v):
+	render_variables[k] = v
 
 
 def render_all():
@@ -17,18 +32,18 @@ def render_all():
 				if settings.dungeon_map[x][y].explored:
 					# its out of the player's FOV
 					if wall:
-						tcod.console_set_char_background(settings.con, x, y, colors.color_dark_wall,
+						tcod.console_set_char_background(settings.con, x, y, colors.dark_wall,
 							tcod.BKGND_SET)
 					else:
-						tcod.console_set_char_background(settings.con, x, y, colors.color_dark_ground,
+						tcod.console_set_char_background(settings.con, x, y, colors.dark_ground,
 							tcod.BKGND_SET)
 			else:
 				# its visible
 				if wall:
-					tcod.console_set_char_background(settings.con, x, y, colors.color_light_wall,
+					tcod.console_set_char_background(settings.con, x, y, colors.light_wall,
 						tcod.BKGND_SET)
 				else:
-					tcod.console_set_char_background(settings.con, x, y, colors.color_light_ground,
+					tcod.console_set_char_background(settings.con, x, y, colors.light_ground,
 						tcod.BKGND_SET)
 				settings.dungeon_map[x][y].explored = True
 
@@ -39,6 +54,7 @@ def render_all():
 	settings.player.draw()
 
 	tcod.console_blit(settings.con, 0, 0, settings.MAP_WIDTH, settings.MAP_HEIGHT, 0, 0, 0)
+	highlight_mouse_cursor()
 
 	# prepare to render the GUI panel
 	tcod.console_set_default_background(settings.panel, tcod.black)
@@ -84,3 +100,24 @@ def render_bar(x, y, total_width, name, value, maximum, bar_color, back_color):
 	display_value = name + ': ' + str(value) + '/' + str(maximum)
 
 	tcod.console_print_ex(settings.panel, x + total_width // 2, y, tcod.BKGND_NONE, tcod.CENTER, display_value)
+
+
+def highlight_mouse_cursor():
+	if get_render_variable('highlighting_enabled'):
+		if handle_keys.is_key_pressed():
+			set_render_variable('highlighting_enabled', False)
+			set_render_variable('oldx', settings.mouse.cx)
+			set_render_variable('oldy', settings.mouse.cy)
+		x, y = settings.mouse.cx, settings.mouse.cy
+		for i in range(-1, 2):
+			for j in range(-1, 2):
+				if i == 0 and j == 0:
+					tcod.console_set_char_background(settings.targeting, x, y, colors.white)
+				else:
+					tcod.console_set_char_background(settings.targeting, x + i, y + j, colors.ecru)
+	else:
+		if get_render_variable('oldx') != settings.mouse.cx or get_render_variable('oldy') != settings.mouse.cy:
+			set_render_variable('highlighting_enabled', True)
+
+	tcod.console_blit(settings.targeting, 0, 0, settings.MAP_WIDTH, settings.MAP_HEIGHT, 0, 0, 0, 0.0, 0.3)
+	tcod.console_clear(settings.targeting)
