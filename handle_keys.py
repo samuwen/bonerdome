@@ -7,7 +7,7 @@ from menu import abilities_menu
 from message import message
 from level_manager import next_level
 from level_manager import previous_level
-from targetting import combatant_is_adjacent
+from targeting import combatant_is_adjacent
 
 
 def handle_keys():
@@ -59,8 +59,8 @@ def handle_keys():
 							msgbox("You cannot leave until you have the Dome of Boners")
 			if key_char == 'c':
 				# show character stats
-				level_up_exp = settings.LEVEL_UP_BASE + settings.player.level * settings.LEVEL_UP_FACTOR
-				msgbox("Character information\n\nLevel: " + str(settings.player.level) + "\nExperience: " +
+				level_up_exp = settings.LEVEL_UP_BASE + settings.player.combatant.level * settings.LEVEL_UP_FACTOR
+				msgbox("Character information\n\nLevel: " + str(settings.player.combatant.level) + "\nExperience: " +
 					str(settings.player.combatant.xp) + "\nExperience to level up:" + str(level_up_exp - settings.player.combatant.xp) +
 					"\n\nMaximum Hp: " + str(settings.player.combatant.max_hp) + "\nAttack: " + str(settings.player.combatant.power) +
 					"\nDefense: " + str(settings.player.combatant.defense), settings.CHARACTER_SCREEN_WIDTH)
