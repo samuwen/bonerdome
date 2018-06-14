@@ -1,8 +1,11 @@
 import libtcodpy as tcod
 
-dark_wall = tcod.Color(0, 0, 100)
-light_wall = tcod.Color(130, 110, 50)
-dark_ground = tcod.Color(50, 50, 150)
-light_ground = tcod.Color(200, 180, 50)
-white = tcod.Color(255, 255, 255)
-ecru = tcod.Color(50, 50, 50)
+dark_wall = tcod.Color(55, 55, 55)
+light_wall = tcod.Color(80, 80, 80)
+dark_ground = tcod.Color(15, 15, 15)
+light_ground = tcod.Color(45, 45, 45)
+orc = tcod.Color(38, 209, 78)
+mlook_hilite_neut = tcod.Color(242, 235, 90)
+mlook_hilite_neut_secondary = tcod.Color(153, 149, 22)
+mlook_hilite_look = tcod.Color(55, 40, 156)
+mlook_hilite_look_secondary = tcod.Color(82, 59, 232)

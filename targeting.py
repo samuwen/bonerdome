@@ -19,6 +19,7 @@ def target_tile(max_range=None):
 			return (x, y)
 
 		if settings.mouse.rbutton_pressed or settings.key.vk == tcod.KEY_ESCAPE:
+			settings.game_state = 'playing'
 			return (None, None)  # right click or escape to cancel
 
 

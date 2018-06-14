@@ -2,23 +2,22 @@ import libtcodpy as tcod
 import settings
 
 from menu import msgbox
-from menu import inventory_menu
 from menu import abilities_menu
+from menu import information_menu
+from menu import inventory_menu
 from message import message
 from level_manager import next_level
 from level_manager import previous_level
 from targeting import combatant_is_adjacent
+from targeting import target_tile
 
 
 def handle_keys():
-	if settings.key.vk == tcod.KEY_ENTER and settings.key.lalt:
-			# alt + enter == fullscreen toggle
-			tcod.console_set_fullscreen(not tcod.console_is_fullscreen())
-	elif settings.key.vk == tcod.KEY_ESCAPE:
-		# escape key == quit game
-		return 'exit'
-
 	if settings.game_state == 'playing':
+		if settings.key.vk == tcod.KEY_ESCAPE:
+			return 'exit'
+		elif settings.key.vk == tcod.KEY_ENTER and settings.key.lalt:
+			tcod.console_set_fullscreen(not tcod.console_is_fullscreen())
 		# movement keys
 		try:
 			return settings.keycode_to_direction_tuple_map[settings.key.vk]
@@ -44,6 +43,8 @@ def handle_keys():
 				chosen_item = inventory_menu("Press the letter next to the item to drop it.\n")
 				if chosen_item is not None:
 					chosen_item.drop()
+			if key_char == 'l':
+				settings.game_state = 'looking'
 			if key_char == '.' and settings.key.shift:
 				if settings.stairs_down.x == settings.player.x and settings.stairs_down.y == settings.player.y:
 					next_level()
@@ -66,6 +67,10 @@ def handle_keys():
 					"\nDefense: " + str(settings.player.combatant.defense), settings.CHARACTER_SCREEN_WIDTH)
 
 			return 'didnt-take-turn'
+	elif settings.game_state == 'looking':
+		(x, y) = target_tile()
+		information_menu(x, y)
+		return 'didnt-take-turn'
 
 
 def player_move_or_attack(dx, dy):

@@ -103,6 +103,12 @@ def render_bar(x, y, total_width, name, value, maximum, bar_color, back_color):
 
 
 def highlight_mouse_cursor():
+	if settings.game_state == 'playing':
+		main_color = colors.mlook_hilite_neut
+		secondary_color = colors.mlook_hilite_neut_secondary
+	elif settings.game_state == 'looking':
+		main_color = colors.mlook_hilite_look
+		secondary_color = colors.mlook_hilite_look_secondary
 	if get_render_variable('highlighting_enabled'):
 		if handle_keys.is_key_pressed():
 			set_render_variable('highlighting_enabled', False)
@@ -112,12 +118,12 @@ def highlight_mouse_cursor():
 		for i in range(-1, 2):
 			for j in range(-1, 2):
 				if i == 0 and j == 0:
-					tcod.console_set_char_background(settings.targeting, x, y, colors.white)
+					tcod.console_set_char_background(settings.targeting, x, y, main_color)
 				else:
-					tcod.console_set_char_background(settings.targeting, x + i, y + j, colors.ecru)
+					tcod.console_set_char_background(settings.targeting, x + i, y + j, secondary_color)
 	else:
 		if get_render_variable('oldx') != settings.mouse.cx or get_render_variable('oldy') != settings.mouse.cy:
 			set_render_variable('highlighting_enabled', True)
 
-	tcod.console_blit(settings.targeting, 0, 0, settings.MAP_WIDTH, settings.MAP_HEIGHT, 0, 0, 0, 0.0, 0.3)
+	tcod.console_blit(settings.targeting, 0, 0, settings.MAP_WIDTH, settings.MAP_HEIGHT, 0, 0, 0, 0.0, 0.15)
 	tcod.console_clear(settings.targeting)

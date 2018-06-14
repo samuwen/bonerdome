@@ -73,7 +73,14 @@ def abilities_menu(header):
 		if ability.current_cooldown_time > 0:
 			avail = " (" + str(ability.current_cooldown_time) + " turns until ready)"
 		options.append(ability.name + avail)
-	index = menu(header, options, settings.INVENTORY_WIDTH)
+	index = menu(header, options, settings.ABILITY_WIDTH)
 	if index is None or len(abilities) == 0:
 		return None
 	return abilities[index]
+
+
+def information_menu(x, y):
+	for obj in settings.objects:
+		if obj.x == x and obj.y == y and tcod.map_is_in_fov(settings.fov_map, obj.x, obj.y):
+			index = menu(obj.name.capitalize(), ["Here's a bunch of info about this object."], 50)
+			return index

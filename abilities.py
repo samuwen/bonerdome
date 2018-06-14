@@ -4,8 +4,8 @@ import libtcodpy as tcod
 import settings
 
 from message import message
-from targetting import target_monster
-from targetting import target_tile
+from targeting import target_monster
+from targeting import target_tile
 from utilities import add_tuples
 
 
@@ -28,7 +28,7 @@ def cast_lightning():
 	monster.combatant.take_damage(settings.LIGHTNING_DAMAGE)
 
 
-def cast_confuse():
+def cast_confuse(player=None, target=None):
 	# find closest enemy in range and confuse it
 	message("Left click an enemy to confuse it. Right click to cancel", tcod.light_cyan)
 	monster = target_monster(settings.CONFUSE_RANGE)
