@@ -24,7 +24,6 @@ def play_game():
 
 		for obj in settings.objects:
 			obj.clear()
-
 		settings.player_action = handle_keys()
 		if type(settings.player_action) is tuple:
 			player_move_or_attack(*settings.player_action)

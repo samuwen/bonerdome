@@ -4,7 +4,7 @@ import settings
 from render import render_all
 
 
-def target_tile(max_range=None):
+def target_tile(direction_keys, max_range=None):
 	# return the position of a tile that has been left-clicked within the player's FOV
 	while True:
 		# render the screen. This erases the inventory and shows the names of objects under the mouse
@@ -12,15 +12,16 @@ def target_tile(max_range=None):
 		tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS | tcod.EVENT_MOUSE, settings.key, settings.mouse)
 		render_all()
 
-		(x, y) = (settings.mouse.cx, settings.mouse.cy)
+	print(str(direction_keys))
+	(x, y) = (settings.mouse.cx, settings.mouse.cy)
 
-		if (settings.mouse.lbutton_pressed and tcod.map_is_in_fov(settings.fov_map, x, y) and
-			(max_range is None or settings.player.distance(x, y) <= max_range)):
-			return (x, y)
+	if (settings.mouse.lbutton_pressed and tcod.map_is_in_fov(settings.fov_map, x, y) and
+		(max_range is None or settings.player.distance(x, y) <= max_range)):
+		return (x, y)
 
-		if settings.mouse.rbutton_pressed or settings.key.vk == tcod.KEY_ESCAPE:
-			settings.game_state = 'playing'
-			return (None, None)  # right click or escape to cancel
+	if settings.mouse.rbutton_pressed or settings.key.vk == tcod.KEY_ESCAPE:
+		settings.game_state = 'playing'
+		return (None, None)  # right click or escape to cancel
 
 
 def target_monster(max_range):

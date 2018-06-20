@@ -3,10 +3,11 @@ import handle_keys
 import libtcodpy as tcod
 import settings
 
+# These are to store and retrieve the position of the mouse when mouselook is disabled
 render_variables = {
-	'oldx': settings.mouse.cx,
-	'oldy': settings.mouse.cy,
-	'highlighting_enabled': False
+	'l_locx': settings.mouse.cx,
+	'l_locy': settings.mouse.cy,
+	'light_with_mouse': False
 }
 
 
@@ -33,18 +34,18 @@ def render_all():
 					# its out of the player's FOV
 					if wall:
 						tcod.console_set_char_background(settings.con, x, y, colors.dark_wall,
-							tcod.BKGND_SET)
+								tcod.BKGND_SET)
 					else:
 						tcod.console_set_char_background(settings.con, x, y, colors.dark_ground,
-							tcod.BKGND_SET)
+								tcod.BKGND_SET)
 			else:
 				# its visible
 				if wall:
 					tcod.console_set_char_background(settings.con, x, y, colors.light_wall,
-						tcod.BKGND_SET)
+							tcod.BKGND_SET)
 				else:
 					tcod.console_set_char_background(settings.con, x, y, colors.light_ground,
-						tcod.BKGND_SET)
+							tcod.BKGND_SET)
 				settings.dungeon_map[x][y].explored = True
 
 	# draw all objects in the list
@@ -109,21 +110,24 @@ def highlight_mouse_cursor():
 	elif settings.game_state == 'looking':
 		main_color = colors.mlook_hilite_look
 		secondary_color = colors.mlook_hilite_look_secondary
-	if get_render_variable('highlighting_enabled'):
-		if handle_keys.is_key_pressed():
-			set_render_variable('highlighting_enabled', False)
-			set_render_variable('oldx', settings.mouse.cx)
-			set_render_variable('oldy', settings.mouse.cy)
+	if get_render_variable('light_with_mouse'):
+		# hide the mouse highlighting
 		x, y = settings.mouse.cx, settings.mouse.cy
-		for i in range(-1, 2):
-			for j in range(-1, 2):
-				if i == 0 and j == 0:
-					tcod.console_set_char_background(settings.targeting, x, y, main_color)
-				else:
-					tcod.console_set_char_background(settings.targeting, x + i, y + j, secondary_color)
+		if handle_keys.is_key_pressed():
+			set_render_variable('light_with_mouse', False)
+			set_render_variable('l_locx', settings.mouse.cx)
+			set_render_variable('l_locy', settings.mouse.cy)
 	else:
-		if get_render_variable('oldx') != settings.mouse.cx or get_render_variable('oldy') != settings.mouse.cy:
-			set_render_variable('highlighting_enabled', True)
+		x, y = settings.player.x, settings.player.y
+		if get_render_variable('l_locx') != settings.mouse.cx or get_render_variable('l_locy') != settings.mouse.cy:
+			set_render_variable('light_with_mouse', True)
+
+	for i in range(-1, 2):
+		for j in range(-1, 2):
+			if i == 0 and j == 0:
+				tcod.console_set_char_background(settings.targeting, x, y, main_color)
+			else:
+				tcod.console_set_char_background(settings.targeting, x + i, y + j, secondary_color)
 
 	tcod.console_blit(settings.targeting, 0, 0, settings.MAP_WIDTH, settings.MAP_HEIGHT, 0, 0, 0, 0.0, 0.15)
 	tcod.console_clear(settings.targeting)

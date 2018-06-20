@@ -19,58 +19,64 @@ def handle_keys():
 		elif settings.key.vk == tcod.KEY_ENTER and settings.key.lalt:
 			tcod.console_set_fullscreen(not tcod.console_is_fullscreen())
 		# movement keys
-		try:
-			return settings.keycode_to_direction_tuple_map[settings.key.vk]
-		except KeyError:
-			key_char = chr(settings.key.c)
+		is_direction = handle_direction_keys()
+		if is_direction is not None:
+			return is_direction
+		key_char = chr(settings.key.c)
 
-			if key_char == 'g':
-				for obj in settings.objects:
-					if obj.x == settings.player.x and obj.y == settings.player.y and obj.item:
-						obj.item.pick_up()
-						break
-			if key_char == 'i':
-				chosen_item = inventory_menu('Press the key next to the item to use it, or any other key to cancel.\n')
-				if chosen_item is not None:
-					chosen_item.use(settings.player)
-			if key_char == 's':
-				chosen_ability = abilities_menu('Press the key next to the skill to use it, or any other key to cancel.\n')
-				if chosen_ability is not None:
-					for ability in settings.player.combatant.abilities:
-						if ability == chosen_ability:
-							ability.use(settings.player)
-			if key_char == 'd':
-				chosen_item = inventory_menu("Press the letter next to the item to drop it.\n")
-				if chosen_item is not None:
-					chosen_item.drop()
-			if key_char == 'l':
-				settings.game_state = 'looking'
-			if key_char == '.' and settings.key.shift:
-				if settings.stairs_down.x == settings.player.x and settings.stairs_down.y == settings.player.y:
-					next_level()
-			if key_char == ',' and settings.key.shift:
-				if settings.stairs_up.x == settings.player.x and settings.stairs_up.y == settings.player.y:
-					if settings.dungeon_level != 1:
-						previous_level()
+		if key_char == 'g':
+			for obj in settings.objects:
+				if obj.x == settings.player.x and obj.y == settings.player.y and obj.item:
+					obj.item.pick_up()
+					break
+		if key_char == 'i':
+			chosen_item = inventory_menu('Press the key next to the item to use it, or any other key to cancel.\n')
+			if chosen_item is not None:
+				chosen_item.use(settings.player)
+		if key_char == 's':
+			chosen_ability = abilities_menu('Press the key next to the skill to use it, or any other key to cancel.\n')
+			if chosen_ability is not None:
+				for ability in settings.player.combatant.abilities:
+					if ability == chosen_ability:
+						ability.use(settings.player)
+		if key_char == 'd':
+			chosen_item = inventory_menu("Press the letter next to the item to drop it.\n")
+			if chosen_item is not None:
+				chosen_item.drop()
+		if key_char == 'l':
+			settings.game_state = 'looking'
+		if key_char == '.' and settings.key.shift:
+			if settings.stairs_down.x == settings.player.x and settings.stairs_down.y == settings.player.y:
+				next_level()
+		if key_char == ',' and settings.key.shift:
+			if settings.stairs_up.x == settings.player.x and settings.stairs_up.y == settings.player.y:
+				if settings.dungeon_level != 1:
+					previous_level()
+				else:
+					if settings.boner_dome in settings.inventory:
+						msgbox("You escape with the Dome of Boners!")
+						return 'exit'
 					else:
-						if settings.boner_dome in settings.inventory:
-							msgbox("You escape with the Dome of Boners!")
-							return 'exit'
-						else:
-							msgbox("You cannot leave until you have the Dome of Boners")
-			if key_char == 'c':
-				# show character stats
-				level_up_exp = settings.LEVEL_UP_BASE + settings.player.combatant.level * settings.LEVEL_UP_FACTOR
-				msgbox("Character information\n\nLevel: " + str(settings.player.combatant.level) + "\nExperience: " +
-					str(settings.player.combatant.xp) + "\nExperience to level up:" + str(level_up_exp - settings.player.combatant.xp) +
-					"\n\nMaximum Hp: " + str(settings.player.combatant.max_hp) + "\nAttack: " + str(settings.player.combatant.power) +
-					"\nDefense: " + str(settings.player.combatant.defense), settings.CHARACTER_SCREEN_WIDTH)
+						msgbox("You cannot leave until you have the Dome of Boners")
+		if key_char == 'c':
+			# show character stats
+			level_up_exp = settings.LEVEL_UP_BASE + settings.player.combatant.level * settings.LEVEL_UP_FACTOR
+			msgbox("Character information\n\nLevel: " + str(settings.player.combatant.level) + "\nExperience: " +
+				str(settings.player.combatant.xp) + "\nExperience to level up:" + str(level_up_exp - settings.player.combatant.xp) +
+				"\n\nMaximum Hp: " + str(settings.player.combatant.max_hp) + "\nAttack: " + str(settings.player.combatant.power) +
+				"\nDefense: " + str(settings.player.combatant.defense), settings.CHARACTER_SCREEN_WIDTH)
 
-			return 'didnt-take-turn'
 	elif settings.game_state == 'looking':
-		(x, y) = target_tile()
+		(x, y) = target_tile(handle_direction_keys(), max_range=None)
 		information_menu(x, y)
-		return 'didnt-take-turn'
+	return 'didnt-take-turn'
+
+
+def handle_direction_keys():
+	try:
+		return settings.keycode_to_direction_tuple_map[settings.key.vk]
+	except KeyError:
+		return None
 
 
 def player_move_or_attack(dx, dy):
@@ -96,7 +102,7 @@ def prompt_user_for_direction():
 	keypress = tcod.console_wait_for_keypress(True)
 	if keypress.vk not in settings.keycode_to_direction_tuple_map:
 		message("Aborted")
-		return
+		return None
 	direction = settings.keycode_to_direction_tuple_map[keypress.vk]
 	if type(direction) is not tuple:
 		return None
