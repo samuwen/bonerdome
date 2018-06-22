@@ -25,7 +25,11 @@ Design and build tiles?
 
 Multiple mapping methods (Standard is boring)
 
-Look past current player's location / map bounds
+Look past current player's location / map bounds (scrolling, X command in stone soup)
 
 running
 
+splash targetting
+
+build keymapping menu and move handle_keys to read the instance of the map. split all those functions out into their own little functions
+	so that handle_keys just acts as a traffic cop
