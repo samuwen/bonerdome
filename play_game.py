@@ -8,16 +8,14 @@ from render import render_all
 
 
 def play_game():
+	# clear the root console (Clears the startup images)
+	tcod.console_clear(0)
+
 	settings.mouse = tcod.Mouse()
 	settings.key = tcod.Key()
 
-	# clear the root console to get rid of the dumb extra garbage
-	tcod.console_clear(0)
-
 	# MAIN LOOP
 	while not tcod.console_is_window_closed():
-		tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS | tcod.EVENT_MOUSE, settings.key, settings.mouse)
-
 		render_all()
 		tcod.console_flush()
 		check_level_up()
@@ -25,6 +23,7 @@ def play_game():
 		for obj in settings.objects:
 			obj.clear()
 		settings.player_action = handle_keys()
+		# movement action are returned as tuples
 		if type(settings.player_action) is tuple:
 			player_move_or_attack(*settings.player_action)
 		if settings.player_action == 'exit':

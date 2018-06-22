@@ -84,3 +84,7 @@ def information_menu(x, y):
 		if obj.x == x and obj.y == y and tcod.map_is_in_fov(settings.fov_map, obj.x, obj.y):
 			index = menu(obj.name.capitalize(), ["Here's a bunch of info about this object."], 50)
 			return index
+
+
+def open_inventory_menu():
+	print("open inventory menu")

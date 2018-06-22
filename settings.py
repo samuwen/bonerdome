@@ -2,6 +2,7 @@ import libtcodpy as tcod
 import shelve
 
 from initialize_fov import initialize_fov
+from Keymap import Keymap
 from Object import Object
 from pathlib import Path
 
@@ -70,8 +71,12 @@ game_state = ''
 game_messages = []
 inventory = []
 key = tcod.Key()
+keymap = Keymap()
+look_mode = 'mouse'
 mouse = tcod.Mouse()
 objects = []
+old_x = None
+old_y = None
 player = Object(0, 0, '@', 'player', tcod.white)
 player_action = ''
 profession = ''
@@ -109,7 +114,7 @@ def init():
 
 
 def init_new_game():
-	global dungeon_map, game_messages, inventory, objects, player_action, profession
+	global dungeon_map, game_messages, inventory, objects, player_action, profession, keymap
 	dungeon_map = []
 	game_messages = []
 	inventory = []
@@ -160,23 +165,6 @@ def get_all_equipped(obj):
 		return equipped_list
 	else:
 		return []
-
-
-def get_names_under_mouse():
-	# return a string with the names of all objects under the mouse
-	# if objects are combatants, we get the direction they are facing too
-	(x, y) = (mouse.cx, mouse.cy)
-
-	names = []
-	for obj in objects:
-		if obj.x == x and obj.y == y and tcod.map_is_in_fov(fov_map, obj.x, obj.y):
-			if obj.combatant:
-				names.append(obj.name + " (facing: " + obj.direction + ")")
-			else:
-				names.append(obj.name)
-
-	names = ', '.join(names)
-	return names.capitalize()
 
 
 def save_game():

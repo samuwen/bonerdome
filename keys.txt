@@ -1,0 +1,8 @@
+c,open character
+d,drop item
+g,get items
+i,open inventory
+l,look mode
+s,open spells
+>,go down stairs
+<,go up stairs

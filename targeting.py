@@ -1,18 +1,11 @@
 import libtcodpy as tcod
+import handle_keys
 import settings
 
-from render import render_all
+# from render import render_all
 
 
-def target_tile(direction_keys, max_range=None):
-	# return the position of a tile that has been left-clicked within the player's FOV
-	while True:
-		# render the screen. This erases the inventory and shows the names of objects under the mouse
-		tcod.console_flush()
-		tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS | tcod.EVENT_MOUSE, settings.key, settings.mouse)
-		render_all()
-
-	print(str(direction_keys))
+def target_tile(max_range=None):
 	(x, y) = (settings.mouse.cx, settings.mouse.cy)
 
 	if (settings.mouse.lbutton_pressed and tcod.map_is_in_fov(settings.fov_map, x, y) and
@@ -21,6 +14,7 @@ def target_tile(direction_keys, max_range=None):
 
 	if settings.mouse.rbutton_pressed or settings.key.vk == tcod.KEY_ESCAPE:
 		settings.game_state = 'playing'
+		settings.look_mode = 'mouse'
 		return (None, None)  # right click or escape to cancel
 
 
@@ -58,3 +52,42 @@ def closest_monster(max_range):
 				closest_enemy = obj
 				closest_dist = dist
 	return closest_enemy
+
+
+def get_mouse_coordinates_in_look_mode(max_range=1):
+	if handle_keys.is_key_pressed() and settings.game_state == 'looking':
+		settings.old_x = settings.player.x
+		settings.old_y = settings.player.y
+		settings.look_mode = 'keyboard'
+	x, y = settings.mouse.cx, settings.mouse.cy
+	return (x, y)
+
+
+def get_keyboard_coordinates_in_look_mode(max_range=1):
+	x, y = settings.old_x, settings.old_y
+	if settings.mouse.dx != 0 or settings.mouse.dy != 0:
+		settings.look_mode = 'mouse'
+	try:
+		dx, dy = handle_keys.handle_direction_keys()
+		x = settings.old_x + dx
+		y = settings.old_y + dy
+		settings.old_x = x
+		settings.old_y = y
+		return (x, y)
+	except TypeError:
+		return (x, y)
+
+
+def get_names_at_target_location(x, y):
+	# return a string with the names of all objects under the mouse
+	# if objects are combatants, we get the direction they are facing too
+	names = []
+	for obj in settings.objects:
+		if obj.x == x and obj.y == y and tcod.map_is_in_fov(settings.fov_map, obj.x, obj.y):
+			if obj.combatant:
+				names.append(obj.name + " (facing: " + obj.direction + ")")
+			else:
+				names.append(obj.name)
+
+	names = ', '.join(names)
+	return names.capitalize()

@@ -13,6 +13,7 @@ from targeting import target_tile
 
 
 def handle_keys():
+	tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS | tcod.EVENT_MOUSE, settings.key, settings.mouse)
 	if settings.game_state == 'playing':
 		if settings.key.vk == tcod.KEY_ESCAPE:
 			return 'exit'
@@ -23,7 +24,6 @@ def handle_keys():
 		if is_direction is not None:
 			return is_direction
 		key_char = chr(settings.key.c)
-
 		if key_char == 'g':
 			for obj in settings.objects:
 				if obj.x == settings.player.x and obj.y == settings.player.y and obj.item:
@@ -66,9 +66,12 @@ def handle_keys():
 				"\n\nMaximum Hp: " + str(settings.player.combatant.max_hp) + "\nAttack: " + str(settings.player.combatant.power) +
 				"\nDefense: " + str(settings.player.combatant.defense), settings.CHARACTER_SCREEN_WIDTH)
 
-	elif settings.game_state == 'looking':
-		(x, y) = target_tile(handle_direction_keys(), max_range=None)
-		information_menu(x, y)
+	elif settings.game_state == 'looking' and is_key_pressed():
+		try:
+			(x, y) = target_tile(max_range=None)
+			information_menu(x, y)
+		except TypeError as err:
+			pass
 	return 'didnt-take-turn'
 
 
@@ -110,6 +113,6 @@ def prompt_user_for_direction():
 
 
 def is_key_pressed():
-	if settings.key.vk != tcod.KEY_NONE:
+	if settings.key.vk != tcod.KEY_NONE and settings.key.pressed:
 		return True
 	return False

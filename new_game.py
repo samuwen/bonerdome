@@ -23,6 +23,8 @@ def new_game():
 	settings.player = Object(0, 0, '@', 'player', tcod.white, blocks=True, combatant=combatant_component)
 	settings.player.combatant.profession.get_abilities_for_level()
 	settings.dungeon_level = 1
+	settings.mouse_x = settings.player.x
+	settings.mouse_y = settings.player.y
 
 	make_map()
 	settings.save_level_state()

@@ -1,22 +1,7 @@
 import colors
-import handle_keys
 import libtcodpy as tcod
 import settings
-
-# These are to store and retrieve the position of the mouse when mouselook is disabled
-render_variables = {
-	'l_locx': settings.mouse.cx,
-	'l_locy': settings.mouse.cy,
-	'light_with_mouse': False
-}
-
-
-def get_render_variable(k):
-	return render_variables[k]
-
-
-def set_render_variable(k, v):
-	render_variables[k] = v
+import targeting
 
 
 def render_all():
@@ -55,7 +40,13 @@ def render_all():
 	settings.player.draw()
 
 	tcod.console_blit(settings.con, 0, 0, settings.MAP_WIDTH, settings.MAP_HEIGHT, 0, 0, 0)
-	highlight_mouse_cursor()
+	if settings.look_mode == 'mouse':
+		target_x_y = targeting.get_mouse_coordinates_in_look_mode()
+	elif settings.look_mode == 'keyboard':
+		target_x_y = targeting.get_keyboard_coordinates_in_look_mode()
+	display_highlight_square(*target_x_y)
+	tcod.console_blit(settings.targeting, 0, 0, settings.MAP_WIDTH, settings.MAP_HEIGHT, 0, 0, 0, 0.0, 0.15)
+	tcod.console_clear(settings.targeting)
 
 	# prepare to render the GUI panel
 	tcod.console_set_default_background(settings.panel, tcod.black)
@@ -77,7 +68,7 @@ def render_all():
 	tcod.console_print_ex(settings.panel, 1, 3, tcod.BKGND_NONE, tcod.LEFT, 'Dungeon level ' +
 		str(settings.dungeon_level))
 	tcod.console_set_default_foreground(settings.panel, tcod.light_gray)
-	tcod.console_print_ex(settings.panel, 1, 0, tcod.BKGND_NONE, tcod.LEFT, settings.get_names_under_mouse())
+	tcod.console_print_ex(settings.panel, 1, 0, tcod.BKGND_NONE, tcod.LEFT, targeting.get_names_at_target_location(*target_x_y))
 
 	tcod.console_blit(settings.panel, 0, 0, settings.SCREEN_WIDTH, settings.PANEL_HEIGHT, 0, 0, settings.PANEL_Y)
 
@@ -103,31 +94,16 @@ def render_bar(x, y, total_width, name, value, maximum, bar_color, back_color):
 	tcod.console_print_ex(settings.panel, x + total_width // 2, y, tcod.BKGND_NONE, tcod.CENTER, display_value)
 
 
-def highlight_mouse_cursor():
+def display_highlight_square(x, y, max_range=2):
 	if settings.game_state == 'playing':
 		main_color = colors.mlook_hilite_neut
 		secondary_color = colors.mlook_hilite_neut_secondary
 	elif settings.game_state == 'looking':
 		main_color = colors.mlook_hilite_look
 		secondary_color = colors.mlook_hilite_look_secondary
-	if get_render_variable('light_with_mouse'):
-		# hide the mouse highlighting
-		x, y = settings.mouse.cx, settings.mouse.cy
-		if handle_keys.is_key_pressed():
-			set_render_variable('light_with_mouse', False)
-			set_render_variable('l_locx', settings.mouse.cx)
-			set_render_variable('l_locy', settings.mouse.cy)
-	else:
-		x, y = settings.player.x, settings.player.y
-		if get_render_variable('l_locx') != settings.mouse.cx or get_render_variable('l_locy') != settings.mouse.cy:
-			set_render_variable('light_with_mouse', True)
-
-	for i in range(-1, 2):
-		for j in range(-1, 2):
+	for i in range(1 - max_range, max_range):
+		for j in range(1 - max_range, max_range):
 			if i == 0 and j == 0:
 				tcod.console_set_char_background(settings.targeting, x, y, main_color)
 			else:
 				tcod.console_set_char_background(settings.targeting, x + i, y + j, secondary_color)
-
-	tcod.console_blit(settings.targeting, 0, 0, settings.MAP_WIDTH, settings.MAP_HEIGHT, 0, 0, 0, 0.0, 0.15)
-	tcod.console_clear(settings.targeting)
