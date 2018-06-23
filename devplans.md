@@ -33,3 +33,9 @@ splash targetting
 
 build keymapping menu and move handle_keys to read the instance of the map. split all those functions out into their own little functions
 	so that handle_keys just acts as a traffic cop
+
+monsters wake up and wander around the map
+
+monsters pathfind the player if they know he's around / just off screen
+
+monsters respawn if enemy population drops too low
