@@ -1,5 +1,6 @@
 import libtcodpy as tcod
 import settings
+import targeting
 
 from menu import msgbox
 from menu import abilities_menu
@@ -8,8 +9,6 @@ from menu import inventory_menu
 from message import message
 from level_manager import next_level
 from level_manager import previous_level
-from targeting import combatant_is_adjacent
-from targeting import target_tile
 
 
 def handle_keys():
@@ -66,12 +65,45 @@ def handle_keys():
 				"\n\nMaximum Hp: " + str(settings.player.combatant.max_hp) + "\nAttack: " + str(settings.player.combatant.power) +
 				"\nDefense: " + str(settings.player.combatant.defense), settings.CHARACTER_SCREEN_WIDTH)
 
-	elif settings.game_state == 'looking' and is_key_pressed():
-		try:
-			(x, y) = target_tile(max_range=None)
-			information_menu(x, y)
-		except TypeError as err:
-			pass
+		settings.selection_coordinates = (settings.mouse.cx, settings.mouse.cy)
+	elif settings.game_state == 'looking':
+		is_direction = handle_direction_keys()
+
+		if settings.key.vk == tcod.KEY_ESCAPE:
+			return 'exit'
+		if settings.look_mode == 'mouse':
+			if is_direction is not None:
+				settings.look_mode = 'keyboard'
+			settings.selection_coordinates = (settings.mouse.cx, settings.mouse.cy)
+
+		if settings.look_mode == 'keyboard':
+
+			if settings.old_x is None or settings.old_y is None:
+				settings.old_x = settings.mouse.cx
+				settings.old_y = settings.mouse.cy
+
+			x = settings.old_x
+			y = settings.old_y
+			if is_direction is not None:
+				x = settings.old_x + is_direction[0]
+				y = settings.old_y + is_direction[1]
+				settings.old_x = x
+				settings.old_y = y
+
+			settings.selection_coordinates = (x, y)
+
+			if settings.mouse.dx != 0 or settings.mouse.dy != 0:
+				settings.look_mode = 'mouse'
+				settings.old_x = None
+				settings.old_y = None
+
+		if settings.mouse.lbutton_pressed or settings.key.vk == tcod.KEY_ENTER:
+			information_menu(*settings.selection_coordinates)
+	elif settings.game_state == 'targeting':
+		# figure out how to control this from here
+		pass
+	else:
+		settings.selection_coordinates = (settings.mouse.cx, settings.mouse.cy)
 	return 'didnt-take-turn'
 
 
@@ -90,7 +122,7 @@ def player_move_or_attack(dx, dy):
 	y = settings.player.y + dy
 
 	# try to find an attackable object
-	target = combatant_is_adjacent(x, y)
+	target = targeting.combatant_is_adjacent(x, y)
 
 	# attack if target found, otherwise move
 	if target is not None:

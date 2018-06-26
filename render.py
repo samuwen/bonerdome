@@ -40,11 +40,7 @@ def render_all():
 	settings.player.draw()
 
 	tcod.console_blit(settings.con, 0, 0, settings.MAP_WIDTH, settings.MAP_HEIGHT, 0, 0, 0)
-	if settings.look_mode == 'mouse':
-		target_x_y = targeting.get_mouse_coordinates_in_look_mode()
-	elif settings.look_mode == 'keyboard':
-		target_x_y = targeting.get_keyboard_coordinates_in_look_mode()
-	display_highlight_square(*target_x_y)
+	targeting.display_highlight_square()
 	tcod.console_blit(settings.targeting, 0, 0, settings.MAP_WIDTH, settings.MAP_HEIGHT, 0, 0, 0, 0.0, 0.15)
 	tcod.console_clear(settings.targeting)
 
@@ -68,7 +64,8 @@ def render_all():
 	tcod.console_print_ex(settings.panel, 1, 3, tcod.BKGND_NONE, tcod.LEFT, 'Dungeon level ' +
 		str(settings.dungeon_level))
 	tcod.console_set_default_foreground(settings.panel, tcod.light_gray)
-	tcod.console_print_ex(settings.panel, 1, 0, tcod.BKGND_NONE, tcod.LEFT, targeting.get_names_at_target_location(*target_x_y))
+	tcod.console_print_ex(settings.panel, 1, 0, tcod.BKGND_NONE, tcod.LEFT,
+		targeting.get_names_at_target_location(*settings.selection_coordinates))
 
 	tcod.console_blit(settings.panel, 0, 0, settings.SCREEN_WIDTH, settings.PANEL_HEIGHT, 0, 0, settings.PANEL_Y)
 

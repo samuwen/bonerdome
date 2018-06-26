@@ -55,6 +55,8 @@ CONFUSE_NUM_TURNS = 10
 CONFUSE_RANGE = 8
 FIREBALL_RADIUS = 3
 FIREBALL_DAMAGE = 25
+HOLD_NUM_TURNS = 10
+HOLD_RANGE = 8
 
 # Consoles
 con = tcod.console_new(MAP_WIDTH, MAP_HEIGHT)
@@ -62,6 +64,7 @@ targeting = tcod.console_new(MAP_WIDTH, MAP_HEIGHT)
 panel = tcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
 
 # Runtime global variables
+abilities = []
 boner_dome = Object(0, 0, 'D', 'boner_dome', tcod.yellow)
 dungeon_level = 1
 dungeon_map = []
@@ -74,13 +77,15 @@ key = tcod.Key()
 keymap = Keymap()
 look_mode = 'mouse'
 mouse = tcod.Mouse()
+new_x = None
+new_y = None
 objects = []
 old_x = None
 old_y = None
 player = Object(0, 0, '@', 'player', tcod.white)
 player_action = ''
 profession = ''
-abilities = []
+selection_coordinates = (0, 0)
 stairs_down = Object(0, 0, '>', 'stairs down', tcod.white)
 stairs_up = Object(0, 0, '<', 'stairs up', tcod.white)
 

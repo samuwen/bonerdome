@@ -30,3 +30,16 @@ class ConfusedMonster:
 		else:
 			self.owner.ai = self.old_ai
 			message("The " + self.owner.name + " is no longer confused!", tcod.red)
+
+
+class HeldMonster:
+	def __init__(self, old_ai, num_turns=settings.HOLD_NUM_TURNS):
+		self.old_ai = old_ai
+		self.num_turns = num_turns
+
+	def take_turn(self):
+		if self.num_turns > 0:
+			self.num_turns -= 1
+		else:
+			self.owner.ai = self.old_ai
+			message("The " + self.owner.name + " is no longer held!", tcod.red)

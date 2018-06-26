@@ -24,8 +24,19 @@ confuse = {
 	'fail_message': 'failed to confuse enemy'
 }
 
+hold_person = {
+	'use_function': abilities.cast_hold_in_place,
+	'cost': 0,
+	'distance': 1,
+	'name': 'hold position',
+	'damage': 0,
+	'cooldown_time': 5,
+	'succ_message': "held enemy",
+	'fail_message': 'failed to hold enemy'
+}
+
 # ability_list should be ordered by level. Lower ordinal abilities are available at lower levels
-ability_list = [smash, confuse]
+ability_list = [smash, confuse, hold_person]
 
 
 # def get_ability_list(profession):

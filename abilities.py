@@ -3,9 +3,10 @@ import handle_keys
 import libtcodpy as tcod
 import settings
 
+from menu import msgbox
 from message import message
+from targeting import handle_basic_targeting
 from targeting import target_monster
-from targeting import target_tile
 from utilities import add_tuples
 
 
@@ -40,16 +41,32 @@ def cast_confuse(player=None, target=None):
 	message(monster.name + ' looks confused!', tcod.green)
 
 
+def cast_hold_in_place(player=None, target=None):
+	# find closest enemy in range and confuse it
+	message("Left click an enemy to hold it in place. Right click to cancel", tcod.light_cyan)
+	monster = target_monster(settings.HOLD_RANGE)
+	if monster is None:
+		return 'cancelled'
+	old_ai = monster.ai
+	monster.ai = ai.HeldMonster(old_ai)
+	monster.ai.owner = monster
+	message(monster.name + ' looks unable to move!', tcod.green)
+
+
 def cast_fireball():
+	fireball_max_range = 10
 	# ask the player for a target location to which the fireball shall be thrown
 	message("Left-click a target tile for the fireball or right-click to cancel", tcod.light_cyan)
-	(x, y) = target_tile()
-	if x is None:
+	target = handle_basic_targeting(*settings.selection_coordinates, fireball_max_range)
+	if not target:
+		msgbox("Invalid target")
+		return 'cancelled'
+	if target == 'cancelled':
 		return 'cancelled'
 	message("The fireball explodes! Burning everything within " + str(settings.FIREBALL_RADIUS) + " tiles!", tcod.orange)
 
 	for obj in settings.objects:
-		if obj.distance(x, y) <= settings.FIREBALL_RADIUS and obj.combatant:
+		if obj.distance(*settings.selection_coordinates) <= settings.FIREBALL_RADIUS and obj.combatant:
 			message("The " + obj.name + " gets burned for " + str(settings.FIREBALL_DAMAGE) + " hit points.", tcod.red)
 			obj.combatant.take_damage(settings.FIREBALL_DAMAGE)
 

@@ -1,33 +1,31 @@
+import colors
 import libtcodpy as tcod
-import handle_keys
 import settings
 
-# from render import render_all
 
-
-def target_tile(max_range=None):
-	(x, y) = (settings.mouse.cx, settings.mouse.cy)
-
-	if (settings.mouse.lbutton_pressed and tcod.map_is_in_fov(settings.fov_map, x, y) and
-		(max_range is None or settings.player.distance(x, y) <= max_range)):
-		return (x, y)
-
+def handle_basic_targeting(x, y, max_range=None):
 	if settings.mouse.rbutton_pressed or settings.key.vk == tcod.KEY_ESCAPE:
-		settings.game_state = 'playing'
-		settings.look_mode = 'mouse'
-		return (None, None)  # right click or escape to cancel
+		return 'cancelled'
+	return is_target_valid(x, y, max_range)
+
+
+def is_target_valid(x, y, max_range=None):
+	if (tcod.map_is_in_fov(settings.fov_map, x, y) and
+		(max_range is None or settings.player.distance(x, y) <= max_range)):
+		return True
+	return False
 
 
 def target_monster(max_range):
 	# returns a clicked monster in FOV up to a specific range
-	while True:
-		(x, y) = target_tile(max_range)
-		if x is None:  # player cancelled
-			return None
 
-		for obj in settings.objects:
-			if obj.x == x and obj.y == y and obj.combatant and obj != settings.player:
-				return obj
+	(x, y) = settings.selection_coordinates
+	if x is None:  # player cancelled
+		return None
+
+	for obj in settings.objects:
+		if obj.x == x and obj.y == y and obj.combatant and obj != settings.player:
+			return obj
 
 
 def combatant_is_adjacent(x, y):
@@ -54,30 +52,6 @@ def closest_monster(max_range):
 	return closest_enemy
 
 
-def get_mouse_coordinates_in_look_mode(max_range=1):
-	if handle_keys.is_key_pressed() and settings.game_state == 'looking':
-		settings.old_x = settings.player.x
-		settings.old_y = settings.player.y
-		settings.look_mode = 'keyboard'
-	x, y = settings.mouse.cx, settings.mouse.cy
-	return (x, y)
-
-
-def get_keyboard_coordinates_in_look_mode(max_range=1):
-	x, y = settings.old_x, settings.old_y
-	if settings.mouse.dx != 0 or settings.mouse.dy != 0:
-		settings.look_mode = 'mouse'
-	try:
-		dx, dy = handle_keys.handle_direction_keys()
-		x = settings.old_x + dx
-		y = settings.old_y + dy
-		settings.old_x = x
-		settings.old_y = y
-		return (x, y)
-	except TypeError:
-		return (x, y)
-
-
 def get_names_at_target_location(x, y):
 	# return a string with the names of all objects under the mouse
 	# if objects are combatants, we get the direction they are facing too
@@ -91,3 +65,20 @@ def get_names_at_target_location(x, y):
 
 	names = ', '.join(names)
 	return names.capitalize()
+
+
+def display_highlight_square(max_range=2):
+	(x, y) = settings.selection_coordinates
+	if settings.game_state == 'playing':
+		main_color = colors.mlook_hilite_neut
+		secondary_color = colors.mlook_hilite_neut_secondary
+	elif settings.game_state == 'looking':
+		main_color = colors.mlook_hilite_look
+		secondary_color = colors.mlook_hilite_look_secondary
+
+	for i in range(1 - max_range, max_range):
+		for j in range(1 - max_range, max_range):
+			if i == 0 and j == 0:
+				tcod.console_set_char_background(settings.targeting, x, y, main_color)
+			else:
+				tcod.console_set_char_background(settings.targeting, x + i, y + j, secondary_color)
