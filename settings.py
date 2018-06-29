@@ -72,6 +72,7 @@ fov_map = tcod.map_new(MAP_WIDTH, MAP_HEIGHT)
 fov_recompute = True
 game_state = ''
 game_messages = []
+highlight_state = ''
 inventory = []
 key = tcod.Key()
 keymap = Keymap()
@@ -120,8 +121,10 @@ def init():
 
 def init_new_game():
 	global dungeon_map, game_messages, inventory, objects, player_action, profession, keymap
+	global highlight_state
 	dungeon_map = []
 	game_messages = []
+	highlight_state = 'play'
 	inventory = []
 	objects = []
 	player_action = ''

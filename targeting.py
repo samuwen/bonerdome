@@ -1,6 +1,8 @@
-import colors
 import libtcodpy as tcod
 import settings
+
+from looking_controller import looking_input
+from render import handle_rendering_tasks
 
 
 def handle_basic_targeting(x, y, max_range=None):
@@ -16,16 +18,26 @@ def is_target_valid(x, y, max_range=None):
 	return False
 
 
-def target_monster(max_range):
-	# returns a clicked monster in FOV up to a specific range
+def get_target(max_range):
+	while True:
+		tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS | tcod.EVENT_MOUSE, settings.key, settings.mouse)
+		try:
+			is_direction = settings.keycode_to_direction_tuple_map[settings.key.vk]
+		except KeyError:
+			is_direction = None
 
-	(x, y) = settings.selection_coordinates
-	if x is None:  # player cancelled
-		return None
+		result = looking_input('target', direction_keys=is_direction, max_range=max_range)
+		handle_rendering_tasks()
+		# returns a clicked monster in FOV up to a specific range
 
-	for obj in settings.objects:
-		if obj.x == x and obj.y == y and obj.combatant and obj != settings.player:
-			return obj
+		if result == 'target_selected':
+			(x, y) = settings.selection_coordinates
+
+			for obj in settings.objects:
+				if obj.x == x and obj.y == y and obj.combatant and obj != settings.player:
+					return obj
+		elif result == 'exit':
+			return None
 
 
 def combatant_is_adjacent(x, y):
@@ -65,20 +77,3 @@ def get_names_at_target_location(x, y):
 
 	names = ', '.join(names)
 	return names.capitalize()
-
-
-def display_highlight_square(max_range=2):
-	(x, y) = settings.selection_coordinates
-	if settings.game_state == 'playing':
-		main_color = colors.mlook_hilite_neut
-		secondary_color = colors.mlook_hilite_neut_secondary
-	elif settings.game_state == 'looking':
-		main_color = colors.mlook_hilite_look
-		secondary_color = colors.mlook_hilite_look_secondary
-
-	for i in range(1 - max_range, max_range):
-		for j in range(1 - max_range, max_range):
-			if i == 0 and j == 0:
-				tcod.console_set_char_background(settings.targeting, x, y, main_color)
-			else:
-				tcod.console_set_char_background(settings.targeting, x + i, y + j, secondary_color)

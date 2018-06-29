@@ -13,4 +13,5 @@ class Profession:
 		for index, ability in enumerate(Fighter.ability_list):
 			if int(index) <= self.owner.level:
 				self.owner.abilities.append(Ability(ability['use_function'], ability['cost'], ability['distance'],
-					ability['name'], ability['damage'], ability['cooldown_time'], ability['succ_message'], ability['fail_message']))
+					ability['name'], ability['damage'], ability['cooldown_time'], ability['succ_message'],
+					ability['fail_message'], ability['max_range']))

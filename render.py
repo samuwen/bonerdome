@@ -1,7 +1,6 @@
 import colors
 import libtcodpy as tcod
 import settings
-import targeting
 
 
 def render_all():
@@ -40,7 +39,7 @@ def render_all():
 	settings.player.draw()
 
 	tcod.console_blit(settings.con, 0, 0, settings.MAP_WIDTH, settings.MAP_HEIGHT, 0, 0, 0)
-	targeting.display_highlight_square()
+	display_highlight_square()
 	tcod.console_blit(settings.targeting, 0, 0, settings.MAP_WIDTH, settings.MAP_HEIGHT, 0, 0, 0, 0.0, 0.15)
 	tcod.console_clear(settings.targeting)
 
@@ -65,7 +64,7 @@ def render_all():
 		str(settings.dungeon_level))
 	tcod.console_set_default_foreground(settings.panel, tcod.light_gray)
 	tcod.console_print_ex(settings.panel, 1, 0, tcod.BKGND_NONE, tcod.LEFT,
-		targeting.get_names_at_target_location(*settings.selection_coordinates))
+		get_names_at_target_location(*settings.selection_coordinates))
 
 	tcod.console_blit(settings.panel, 0, 0, settings.SCREEN_WIDTH, settings.PANEL_HEIGHT, 0, 0, settings.PANEL_Y)
 
@@ -91,16 +90,46 @@ def render_bar(x, y, total_width, name, value, maximum, bar_color, back_color):
 	tcod.console_print_ex(settings.panel, x + total_width // 2, y, tcod.BKGND_NONE, tcod.CENTER, display_value)
 
 
-def display_highlight_square(x, y, max_range=2):
-	if settings.game_state == 'playing':
+def display_highlight_square(max_range=2):
+	(x, y) = settings.selection_coordinates
+	if settings.highlight_state == 'play':
 		main_color = colors.mlook_hilite_neut
 		secondary_color = colors.mlook_hilite_neut_secondary
-	elif settings.game_state == 'looking':
+	elif settings.highlight_state == 'look':
 		main_color = colors.mlook_hilite_look
 		secondary_color = colors.mlook_hilite_look_secondary
+	elif settings.highlight_state == 'target':
+		main_color = colors.target_hilite_main
+		secondary_color = colors.target_hilite_secondary
+	elif settings.highlight_state == 'target-out-of-bound':
+		main_color = colors.target_hilite_oob_main
+		secondary_color = colors.target_hilite_oob_secondary
+
 	for i in range(1 - max_range, max_range):
 		for j in range(1 - max_range, max_range):
 			if i == 0 and j == 0:
 				tcod.console_set_char_background(settings.targeting, x, y, main_color)
 			else:
 				tcod.console_set_char_background(settings.targeting, x + i, y + j, secondary_color)
+
+
+def get_names_at_target_location(x, y):
+	# return a string with the names of all objects under the mouse
+	# if objects are combatants, we get the direction they are facing too
+	names = []
+	for obj in settings.objects:
+		if obj.x == x and obj.y == y and tcod.map_is_in_fov(settings.fov_map, obj.x, obj.y):
+			if obj.combatant:
+				names.append(obj.name + " (facing: " + obj.direction + ")")
+			else:
+				names.append(obj.name)
+
+	names = ', '.join(names)
+	return names.capitalize()
+
+
+def handle_rendering_tasks():
+	render_all()
+	tcod.console_flush()
+	for obj in settings.objects:
+		obj.clear()

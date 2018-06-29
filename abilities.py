@@ -1,12 +1,12 @@
 import ai
-import handle_keys
+import input_controller
 import libtcodpy as tcod
 import settings
 
 from menu import msgbox
 from message import message
 from targeting import handle_basic_targeting
-from targeting import target_monster
+from targeting import get_target
 from utilities import add_tuples
 
 
@@ -29,16 +29,19 @@ def cast_lightning():
 	monster.combatant.take_damage(settings.LIGHTNING_DAMAGE)
 
 
-def cast_confuse(player=None, target=None):
+def cast_confuse(user=None, target=None, max_range=1):
 	# find closest enemy in range and confuse it
-	message("Left click an enemy to confuse it. Right click to cancel", tcod.light_cyan)
-	monster = target_monster(settings.CONFUSE_RANGE)
+	message("Select an enemy to confuse it. Right click or Esq to cancel", tcod.light_cyan)
+	settings.highlight_state = 'target'
+	monster = get_target(max_range)
 	if monster is None:
+		settings.highlight_state = 'play'
 		return 'cancelled'
 	old_ai = monster.ai
 	monster.ai = ai.ConfusedMonster(old_ai)
 	monster.ai.owner = monster
 	message(monster.name + ' looks confused!', tcod.green)
+	settings.highlight_state = 'play'
 
 
 def cast_hold_in_place(player=None, target=None):
@@ -74,7 +77,7 @@ def cast_fireball():
 def smash(player, target):
 	distance = 1
 	damage = 20
-	direction = handle_keys.prompt_user_for_direction()
+	direction = input_controller.prompt_user_for_direction()
 	if direction == (0, 0) or type(direction) is not tuple:
 		return 'fail'
 	targets = fire_beam_in_direction((settings.player.x, settings.player.y), direction, distance)

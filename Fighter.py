@@ -10,7 +10,8 @@ smash = {
 	'damage': 20,
 	'cooldown_time': 5,
 	'succ_message': "smashed enemy",
-	'fail_message': 'failed to smash enemy'
+	'fail_message': 'failed to smash enemy',
+	'max_range': 1
 }
 
 confuse = {
@@ -21,7 +22,8 @@ confuse = {
 	'damage': 0,
 	'cooldown_time': 5,
 	'succ_message': "confused enemy",
-	'fail_message': 'failed to confuse enemy'
+	'fail_message': 'failed to confuse enemy',
+	'max_range': 2
 }
 
 hold_person = {
@@ -32,7 +34,8 @@ hold_person = {
 	'damage': 0,
 	'cooldown_time': 5,
 	'succ_message': "held enemy",
-	'fail_message': 'failed to hold enemy'
+	'fail_message': 'failed to hold enemy',
+	'max_range': 6
 }
 
 # ability_list should be ordered by level. Lower ordinal abilities are available at lower levels

@@ -2,8 +2,8 @@ import libtcodpy as tcod
 import settings
 
 from check_level_up import check_level_up
-from handle_keys import input_controller
-from render import render_all
+from input_controller import input_controller
+from render import handle_rendering_tasks
 
 
 def play_game():
@@ -25,18 +25,12 @@ def play_game():
 			break
 		elif settings.player_action == 'exit':
 			settings.game_state = 'playing'
+			settings.highlight_state = 'play'
 
-		if settings.player_action != 'didnt-take-turn':
+		if settings.player_action == 'time-should-advance':
 			for obj in settings.objects:
 				if obj.ai:
 					obj.ai.take_turn()
 				if obj.combatant:
 					for ability in obj.combatant.abilities:
 						ability.advance_cooldown_timer()
-
-
-def handle_rendering_tasks():
-	render_all()
-	tcod.console_flush()
-	for obj in settings.objects:
-		obj.clear()

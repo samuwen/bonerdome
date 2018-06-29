@@ -1,14 +1,14 @@
 import libtcodpy as tcod
 import settings
-import targeting
 
-from menu import msgbox
-from menu import abilities_menu
-from menu import information_menu
-from menu import inventory_menu
-from message import message
 from level_manager import next_level
 from level_manager import previous_level
+from looking_controller import looking_input
+from menu import msgbox
+from menu import abilities_menu
+from menu import inventory_menu
+from message import message
+from targeting import combatant_is_adjacent
 
 
 def input_controller(game_state):
@@ -24,10 +24,7 @@ def input_controller(game_state):
 			player_move_or_attack(*player_action)
 			return 'time-should-advance'
 	elif game_state == 'looking':
-		looking_input()
-	elif game_state == 'targeting':
-		targeting_input()
-	return 'didnt-take-turn'
+		looking_input('info', handle_direction_keys())
 
 
 def playing_input():
@@ -50,13 +47,14 @@ def playing_input():
 		if chosen_ability is not None:
 			for ability in settings.player.combatant.abilities:
 				if ability == chosen_ability:
-					ability.use(settings.player)
+					ability.use(settings.player, None, ability.max_range)
 	if key_char == 'd':
 		chosen_item = inventory_menu("Press the letter next to the item to drop it.\n")
 		if chosen_item is not None:
 			chosen_item.drop()
 	if key_char == 'l':
 		settings.game_state = 'looking'
+		settings.highlight_state = 'look'
 	if key_char == '.' and settings.key.shift:
 		if settings.stairs_down.x == settings.player.x and settings.stairs_down.y == settings.player.y:
 			next_level()
@@ -81,45 +79,6 @@ def playing_input():
 	settings.selection_coordinates = (settings.mouse.cx, settings.mouse.cy)
 
 
-def looking_input():
-	is_direction = handle_direction_keys()
-
-	if settings.key.vk == tcod.KEY_ESCAPE:
-		return 'exit'
-	if settings.look_mode == 'mouse':
-		if is_direction is not None:
-			settings.look_mode = 'keyboard'
-		settings.selection_coordinates = (settings.mouse.cx, settings.mouse.cy)
-
-	if settings.look_mode == 'keyboard':
-
-		if settings.old_x is None or settings.old_y is None:
-			settings.old_x = settings.mouse.cx
-			settings.old_y = settings.mouse.cy
-
-		x = settings.old_x
-		y = settings.old_y
-		if is_direction is not None:
-			x = settings.old_x + is_direction[0]
-			y = settings.old_y + is_direction[1]
-			settings.old_x = x
-			settings.old_y = y
-
-		settings.selection_coordinates = (x, y)
-
-		if settings.mouse.dx != 0 or settings.mouse.dy != 0:
-			settings.look_mode = 'mouse'
-			settings.old_x = None
-			settings.old_y = None
-
-	if settings.mouse.lbutton_pressed or settings.key.vk == tcod.KEY_ENTER:
-		information_menu(*settings.selection_coordinates)
-
-
-def targeting_input():
-	pass
-
-
 def handle_direction_keys():
 	try:
 		return settings.keycode_to_direction_tuple_map[settings.key.vk]
@@ -135,7 +94,7 @@ def player_move_or_attack(dx, dy):
 	y = settings.player.y + dy
 
 	# try to find an attackable object
-	target = targeting.combatant_is_adjacent(x, y)
+	target = combatant_is_adjacent(x, y)
 
 	# attack if target found, otherwise move
 	if target is not None:

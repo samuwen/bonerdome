@@ -5,7 +5,7 @@ from message import message
 
 class Ability:
 	def __init__(self, use_function, cost, distance, name, damage=0, cooldown_time=0, succ_message="success",
-		fail_message="fail"):
+		fail_message="fail", max_range=1):
 		self.use_function = use_function
 		self.cost = cost
 		self.distance = distance
@@ -15,14 +15,16 @@ class Ability:
 		self.current_cooldown_time = 0
 		self.succ_message = succ_message
 		self.fail_message = fail_message
+		self.max_range = max_range
 
-	def use(self, user, target=None):
+	def use(self, user, target, max_range):
 		if self.use_function is None:
 			message(self.owner.name + " cannot be used!", tcod.light_red)
 		elif self.current_cooldown_time != 0:
 			message("You're too tired to use that ability!")
 		else:
-			result = self.use_function(user, target)
+			# print("max range", str(max_range))
+			result = self.use_function(user, target, max_range)
 			if result == 'fail':
 				message(self.fail_message, tcod.light_red)
 			elif result == 'success':
