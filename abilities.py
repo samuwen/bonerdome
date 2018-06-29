@@ -5,8 +5,9 @@ import settings
 
 from menu import msgbox
 from message import message
-from targeting import handle_basic_targeting
 from targeting import get_target
+from targeting import handle_basic_targeting
+from time_controller import advance_time
 from utilities import add_tuples
 
 
@@ -29,31 +30,39 @@ def cast_lightning():
 	monster.combatant.take_damage(settings.LIGHTNING_DAMAGE)
 
 
-def cast_confuse(user=None, target=None, max_range=1):
+def cast_confuse(user=None, target=None, max_range=settings.CONFUSE_RANGE):
 	# find closest enemy in range and confuse it
-	message("Select an enemy to confuse it. Right click or Esq to cancel", tcod.light_cyan)
-	settings.highlight_state = 'target'
-	monster = get_target(max_range)
-	if monster is None:
-		settings.highlight_state = 'play'
+	monster = targeted_ability(max_range)
+	if monster == 'cancelled':
 		return 'cancelled'
 	old_ai = monster.ai
 	monster.ai = ai.ConfusedMonster(old_ai)
 	monster.ai.owner = monster
 	message(monster.name + ' looks confused!', tcod.green)
 	settings.highlight_state = 'play'
+	advance_time()
 
 
-def cast_hold_in_place(player=None, target=None):
-	# find closest enemy in range and confuse it
-	message("Left click an enemy to hold it in place. Right click to cancel", tcod.light_cyan)
-	monster = target_monster(settings.HOLD_RANGE)
-	if monster is None:
+def cast_hold_in_place(player=None, target=None, max_range=settings.HOLD_RANGE):
+	monster = targeted_ability(max_range)
+	if monster == 'cancelled':
 		return 'cancelled'
 	old_ai = monster.ai
 	monster.ai = ai.HeldMonster(old_ai)
 	monster.ai.owner = monster
 	message(monster.name + ' looks unable to move!', tcod.green)
+	settings.highlight_state = 'play'
+	advance_time()
+
+
+def targeted_ability(max_range):
+	message("Select a target. Right click or Escape to cancel", tcod.light_cyan)
+	settings.highlight_state = 'target'
+	monster = get_target(max_range)
+	if monster is None:
+		settings.highlight_state = 'play'
+		return 'cancelled'
+	return monster
 
 
 def cast_fireball():

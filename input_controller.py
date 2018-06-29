@@ -9,6 +9,7 @@ from menu import abilities_menu
 from menu import inventory_menu
 from message import message
 from targeting import combatant_is_adjacent
+from time_controller import advance_time
 
 
 def input_controller(game_state):
@@ -22,7 +23,7 @@ def input_controller(game_state):
 		player_action = playing_input()
 		if type(player_action) is tuple:
 			player_move_or_attack(*player_action)
-			return 'time-should-advance'
+			advance_time()
 	elif game_state == 'looking':
 		looking_input('info', handle_direction_keys())
 

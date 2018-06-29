@@ -26,11 +26,3 @@ def play_game():
 		elif settings.player_action == 'exit':
 			settings.game_state = 'playing'
 			settings.highlight_state = 'play'
-
-		if settings.player_action == 'time-should-advance':
-			for obj in settings.objects:
-				if obj.ai:
-					obj.ai.take_turn()
-				if obj.combatant:
-					for ability in obj.combatant.abilities:
-						ability.advance_cooldown_timer()

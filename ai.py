@@ -39,6 +39,10 @@ class HeldMonster:
 
 	def take_turn(self):
 		if self.num_turns > 0:
+			monster = self.owner
+			if tcod.map_is_in_fov(settings.fov_map, monster.x, monster.y):
+				if monster.distance_to(settings.player) < 2:
+					monster.combatant.attack(settings.player)
 			self.num_turns -= 1
 		else:
 			self.owner.ai = self.old_ai

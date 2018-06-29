@@ -23,7 +23,7 @@ confuse = {
 	'cooldown_time': 5,
 	'succ_message': "confused enemy",
 	'fail_message': 'failed to confuse enemy',
-	'max_range': 2
+	'max_range': 8
 }
 
 hold_person = {
@@ -39,7 +39,7 @@ hold_person = {
 }
 
 # ability_list should be ordered by level. Lower ordinal abilities are available at lower levels
-ability_list = [smash, confuse, hold_person]
+ability_list = [smash, hold_person, confuse]
 
 
 # def get_ability_list(profession):
