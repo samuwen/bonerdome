@@ -1,21 +1,23 @@
 import ai
-import libtcodpy as tcod
-import settings
 import abilities
+import libtcodpy as tcod
+# No idea why I can't just do a from Profession import Profession
+import Profession
+import settings
 
 from Equipment import Equipment
 from Combatant import Combatant
 from Item import Item
 from monster_death import monster_death
 from Object import Object
-from random_choice import random_choice
+from handle_random import random_choice
 
 
 def place_objects(room):
 	max_monsters = settings.from_dungeon_level([[2, 1], [3, 4], [5, 6]])
 	monster_chances = {}
 	monster_chances['orc'] = 80
-	monster_chances['troll'] = settings.from_dungeon_level([[15, 3], [30, 5], [60, 7]])
+	monster_chances['troll'] = settings.from_dungeon_level([[5, 1], [15, 3], [30, 5], [60, 7]])
 
 	max_items = settings.from_dungeon_level([[1, 1], [2, 4]])
 
@@ -35,13 +37,18 @@ def place_objects(room):
 		ai_component = ai.BasicMonster()
 
 		if not settings.is_blocked(x, y):
+			# print(str(monster_chances))
 			choice = random_choice(monster_chances)
 			if choice == 'orc':
-				combatant_component = Combatant(hp=20, defense=0, power=4, xp=35, level=1, death_function=monster_death)
+				profession_component = Profession.Profession(profession='orc')
+				combatant_component = Combatant(xp=35, level=1, death_function=monster_death,
+					profession=profession_component)
 				monster = Object(x, y, 'o', 'orc', tcod.desaturated_green, blocks=True, combatant=combatant_component,
 					ai=ai_component)
 			elif choice == 'troll':
-				combatant_component = Combatant(hp=30, defense=2, power=8, xp=100, level=1, death_function=monster_death)
+				profession_component = Profession.Profession(profession='troll')
+				combatant_component = Combatant(xp=100, level=1, death_function=monster_death,
+					profession=profession_component)
 				monster = Object(x, y, 'T', 'troll', tcod.darkest_green, blocks=True, combatant=combatant_component,
 					ai=ai_component)
 

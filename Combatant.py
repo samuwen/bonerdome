@@ -2,25 +2,32 @@ import libtcodpy as tcod
 import settings
 
 from message import message
+from handle_random import roll_dice
 
 
 class Combatant:
 	# combat-related properties and methods(monster, player, NPC)
-	def __init__(self, hp, defense, power, xp, level, death_function=None, profession=None):
-		self._base_max_hp = hp
-		self.hp = hp
-		self._base_defense = defense
-		self._base_power = power
-		self.xp = xp
+	def __init__(self, xp, level, death_function=None, profession=None):
 		self.level = level
+		self.xp = xp
 		self.death_function = death_function
 		self.profession = profession
 		if self.profession:
 			self.profession.owner = self
+		self.strn = profession.strn
+		self.dex = profession.dex
+		self.con = profession.con
+		self.intel = profession.intel
+		self.hit_dice = profession.hit_dice
+		self._base_max_hp = self.hit_dice[1] + self.profession.get_bonus_values(self.con)
+		self.hp = self._base_max_hp
+		# This should be 10 to adhere to the d20 system. However, we need to revamp some shit first.
+		# self._base_defense = 10 + self.profession.get_bonus_values(self.dex)
+		self._base_defense = 1 + self.profession.get_bonus_values(self.dex)
+		self._base_power = self.profession.get_bonus_values(self.strn)
 		self.abilities = []
 
 	def attack(self, target):
-		# a simple formula for attack damage
 		damage = self.power - target.combatant.defense
 
 		if damage > 0:

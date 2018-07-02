@@ -4,6 +4,7 @@ import settings
 from place_objects import place_objects
 from Item import Item
 from Object import Object
+# from new_game import Profession
 from Rect import Rect
 from Tile import Tile
 

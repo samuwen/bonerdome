@@ -21,3 +21,10 @@ def random_choice_index(chances):  # choose 1 option from a list of chances, ret
 		if dice <= running_sum:
 			return choice
 		choice += 1
+
+
+def roll_dice(die_tuple):
+	result = 0
+	for i in range(die_tuple[0]):
+		result += tcod.random_get_int(0, 1, die_tuple[1])
+	return result

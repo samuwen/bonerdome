@@ -85,7 +85,6 @@ old_x = None
 old_y = None
 player = Object(0, 0, '@', 'player', tcod.white)
 player_action = ''
-profession = ''
 selection_coordinates = (0, 0)
 stairs_down = Object(0, 0, '>', 'stairs down', tcod.white)
 stairs_up = Object(0, 0, '<', 'stairs up', tcod.white)
@@ -120,7 +119,7 @@ def init():
 
 
 def init_new_game():
-	global dungeon_map, game_messages, inventory, objects, player_action, profession, keymap
+	global dungeon_map, game_messages, inventory, objects, player_action, keymap
 	global highlight_state
 	dungeon_map = []
 	game_messages = []
@@ -128,7 +127,6 @@ def init_new_game():
 	inventory = []
 	objects = []
 	player_action = ''
-	profession = ''
 
 	# Deletes all of the existing level states
 	p = Path('.')

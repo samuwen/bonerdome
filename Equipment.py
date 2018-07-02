@@ -6,7 +6,7 @@ from message import message
 
 class Equipment:
 	""" an object that can be equipped, providing bonuses. automatically adds the Item component """
-	def __init__(self, slot, power_bonus=0, defense_bonus=0, max_hp_bonus=0):
+	def __init__(self, slot, power_bonus=0, defense_bonus=0, max_hp_bonus=0, damage_dice=[]):
 		self.slot = slot
 		self.is_equipped = False
 		self.power_bonus = power_bonus

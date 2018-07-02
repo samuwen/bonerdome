@@ -72,10 +72,16 @@ def playing_input():
 	if key_char == 'c':
 		# show character stats
 		level_up_exp = settings.LEVEL_UP_BASE + settings.player.combatant.level * settings.LEVEL_UP_FACTOR
-		msgbox("Character information\n\nLevel: " + str(settings.player.combatant.level) + "\nExperience: " +
-			str(settings.player.combatant.xp) + "\nExperience to level up:" + str(level_up_exp - settings.player.combatant.xp) +
-			"\n\nMaximum Hp: " + str(settings.player.combatant.max_hp) + "\nAttack: " + str(settings.player.combatant.power) +
-			"\nDefense: " + str(settings.player.combatant.defense), settings.CHARACTER_SCREEN_WIDTH)
+		msgbox("Character information\n\nLevel: " + str(settings.player.combatant.level) +
+			"\nExperience: " + str(settings.player.combatant.xp) +
+			"\nExperience to level up:" + str(level_up_exp - settings.player.combatant.xp) +
+			"\n\nMaximum Hp: " + str(settings.player.combatant.max_hp) +
+			"\nAttack: " + str(settings.player.combatant.power) +
+			"\nDefense: " + str(settings.player.combatant.defense) +
+			"\nStrength: " + str(settings.player.combatant.strn) +
+			"\nDexterity: " + str(settings.player.combatant.dex) +
+			"\nIntelligence: " + str(settings.player.combatant.intel) +
+			"\nConstitution: " + str(settings.player.combatant.con), settings.CHARACTER_SCREEN_WIDTH)
 
 	settings.selection_coordinates = (settings.mouse.cx, settings.mouse.cy)
 

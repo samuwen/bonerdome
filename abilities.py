@@ -83,7 +83,7 @@ def cast_fireball():
 			obj.combatant.take_damage(settings.FIREBALL_DAMAGE)
 
 
-def smash(player, target):
+def smash(player, target, max_range):
 	distance = 1
 	damage = 20
 	direction = input_controller.prompt_user_for_direction()
@@ -93,7 +93,7 @@ def smash(player, target):
 	for obj in targets:
 		message(obj.name.capitalize() + " takes " + str(damage) + " damage.")
 		obj.combatant.take_damage(damage)
-	return 'success'
+	advance_time()
 
 
 def fire_beam_in_direction(start_location, direction, distance):

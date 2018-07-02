@@ -15,10 +15,10 @@ from player_death import player_death
 def new_game():
 	settings.init_new_game()
 
-	choose_job()
+	profession = choose_job()
 
-	profession_component = Profession(profession=settings.profession)
-	combatant_component = Combatant(hp=100, defense=1, power=2, xp=0, level=1, death_function=player_death,
+	profession_component = Profession(profession=profession)
+	combatant_component = Combatant(xp=0, level=1, death_function=player_death,
 		profession=profession_component)
 	settings.player = Object(0, 0, '@', 'player', tcod.white, blocks=True, combatant=combatant_component)
 	settings.player.combatant.profession.get_abilities_for_level()
