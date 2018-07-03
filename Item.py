@@ -11,12 +11,12 @@ class Item:
 		self.fail_message = fail_message
 
 	# an item that can be picked up and used
-	def pick_up(self):
+	def pick_up(self, user):
 		# add to the player's inventory and remove from the map
-		if len(settings.inventory) >= 26:
+		if len(user.combatant.inventory) >= 26 and user == settings.player:
 			message("Your inventory is full!", tcod.red)
 		else:
-			settings.inventory.append(self.owner)
+			user.combatant.inventory.append(self.owner)
 			settings.objects.remove(self.owner)
 			message("You picked up a " + self.owner.name + ".", tcod.green)
 			equipment = self.owner.equipment
@@ -25,10 +25,10 @@ class Item:
 
 	def use(self, user):
 		"""
-		user is an object with a fighter component. ie a player or a monster
+		user is an object with a combatant component. ie a player or a monster
 		"""
 		if self.owner.equipment:
-			self.owner.equipment.toggle_equip()
+			user.combatant.toggle_equipment_state(self.owner.equipment)
 			return
 		if self.use_function is None:
 			message(self.owner.name + " cannot be used!", tcod.light_red)
@@ -38,12 +38,12 @@ class Item:
 				message(self.fail_message, tcod.light_red)
 			elif result == 'success':
 				message(self.succ_message, tcod.light_green)
-				settings.inventory.remove(self.owner)
+				user.combatant.inventory.remove(self.owner)
 
-	def drop(self):
+	def drop(self, user):
 		# add to the map and remove from the player's inventory
 		settings.objects.append(self.owner)
-		settings.inventory.remove(self.owner)
+		user.combatant.inventory.remove(self.owner)
 		self.owner.x = settings.player.x
 		self.owner.y = settings.player.y
 		message("You dropped a " + self.owner.name + ".", tcod.yellow)

@@ -7,7 +7,6 @@ from Equipment import Equipment
 from Profession import Profession
 from initialize_fov import initialize_fov
 from map_handler import make_map
-from message import message
 from Object import Object
 from player_death import player_death
 
@@ -32,10 +31,16 @@ def new_game():
 
 	settings.game_state = 'playing'
 
-	message('Welcome to the boner dome.', tcod.cyan)
-
-	equipment_component = Equipment(slot='right hand', power_bonus=2)
+	equipment = 'dagger'
+	equipment_component = Equipment(equipment=equipment)
 	obj = Object(0, 0, '-', 'dagger', tcod.light_blue, equipment=equipment_component)
-	settings.inventory.append(obj)
-	equipment_component.equip()
+	settings.player.combatant.inventory.append(obj)
+	settings.player.combatant.equip_item_to_slot(equipment_component)
+	obj.always_visible = True
+
+	equipment = 'clothes'
+	equipment_component = Equipment(equipment=equipment)
+	obj = Object(0, 0, '#', 'clothes', tcod.light_gray, equipment=equipment_component)
+	settings.player.combatant.inventory.append(obj)
+	settings.player.combatant.toggle_equipment_state(equipment_component)
 	obj.always_visible = True

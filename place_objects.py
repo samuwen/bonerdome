@@ -5,7 +5,6 @@ import libtcodpy as tcod
 import Profession
 import settings
 
-from Equipment import Equipment
 from Combatant import Combatant
 from Item import Item
 from monster_death import monster_death
@@ -17,7 +16,7 @@ def place_objects(room):
 	max_monsters = settings.from_dungeon_level([[2, 1], [3, 4], [5, 6]])
 	monster_chances = {}
 	monster_chances['orc'] = 80
-	monster_chances['troll'] = settings.from_dungeon_level([[5, 1], [15, 3], [30, 5], [60, 7]])
+	monster_chances['troll'] = settings.from_dungeon_level([[15, 3], [30, 5], [60, 7]])
 
 	max_items = settings.from_dungeon_level([[1, 1], [2, 4]])
 
@@ -37,7 +36,6 @@ def place_objects(room):
 		ai_component = ai.BasicMonster()
 
 		if not settings.is_blocked(x, y):
-			# print(str(monster_chances))
 			choice = random_choice(monster_chances)
 			if choice == 'orc':
 				profession_component = Profession.Profession(profession='orc')
@@ -78,12 +76,6 @@ def place_objects(room):
 			# create a confuse scroll, 10% chance
 			item_component = Item(use_function=abilities.cast_confuse)
 			item = Object(x, y, '#', 'scroll of confusion', tcod.white, item=item_component, always_visible=True)
-		elif choice == 'sword':
-			equipment_component = Equipment(slot='right hand', power_bonus=3)
-			item = Object(x, y, '/', 'sword', tcod.chartreuse, equipment=equipment_component)
-		elif choice == 'shield':
-			equipment_component = Equipment(slot='left hand', defense_bonus=1)
-			item = Object(x, y, '[', 'shield', tcod.darker_orange, equipment=equipment_component)
 
 		if not settings.is_blocked(x, y):
 			settings.objects.append(item)

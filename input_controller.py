@@ -6,6 +6,8 @@ from level_manager import previous_level
 from looking_controller import looking_input
 from menu import msgbox
 from menu import abilities_menu
+from menu import character_menu
+
 from menu import inventory_menu
 from message import message
 from targeting import combatant_is_adjacent
@@ -37,7 +39,7 @@ def playing_input():
 	if key_char == 'g':
 		for obj in settings.objects:
 			if obj.x == settings.player.x and obj.y == settings.player.y and obj.item:
-				obj.item.pick_up()
+				obj.item.pick_up(settings.player)
 				break
 	if key_char == 'i':
 		chosen_item = inventory_menu('Press the key next to the item to use it, or any other key to cancel.\n')
@@ -52,7 +54,7 @@ def playing_input():
 	if key_char == 'd':
 		chosen_item = inventory_menu("Press the letter next to the item to drop it.\n")
 		if chosen_item is not None:
-			chosen_item.drop()
+			chosen_item.drop(settings.player)
 	if key_char == 'l':
 		settings.game_state = 'looking'
 		settings.highlight_state = 'look'
@@ -64,24 +66,14 @@ def playing_input():
 			if settings.dungeon_level != 1:
 				previous_level()
 			else:
-				if settings.boner_dome in settings.inventory:
+				if settings.boner_dome in settings.player.combatant.inventory:
 					msgbox("You escape with the Dome of Boners!")
 					return 'exit'
 				else:
 					msgbox("You cannot leave until you have the Dome of Boners")
 	if key_char == 'c':
 		# show character stats
-		level_up_exp = settings.LEVEL_UP_BASE + settings.player.combatant.level * settings.LEVEL_UP_FACTOR
-		msgbox("Character information\n\nLevel: " + str(settings.player.combatant.level) +
-			"\nExperience: " + str(settings.player.combatant.xp) +
-			"\nExperience to level up:" + str(level_up_exp - settings.player.combatant.xp) +
-			"\n\nMaximum Hp: " + str(settings.player.combatant.max_hp) +
-			"\nAttack: " + str(settings.player.combatant.power) +
-			"\nDefense: " + str(settings.player.combatant.defense) +
-			"\nStrength: " + str(settings.player.combatant.strn) +
-			"\nDexterity: " + str(settings.player.combatant.dex) +
-			"\nIntelligence: " + str(settings.player.combatant.intel) +
-			"\nConstitution: " + str(settings.player.combatant.con), settings.CHARACTER_SCREEN_WIDTH)
+		character_menu("Details about your character.\n")
 
 	settings.selection_coordinates = (settings.mouse.cx, settings.mouse.cy)
 

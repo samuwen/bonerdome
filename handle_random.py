@@ -28,3 +28,7 @@ def roll_dice(die_tuple):
 	for i in range(die_tuple[0]):
 		result += tcod.random_get_int(0, 1, die_tuple[1])
 	return result
+
+
+def roll_to_hit():
+	return roll_dice((1, 20))

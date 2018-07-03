@@ -50,19 +50,19 @@ def msgbox(text, width=50):
 
 def inventory_menu(header):
 	# show a menu with each item of the inventory as an option
-	if len(settings.inventory) == 0:
+	if len(settings.player.combatant.inventory) == 0:
 		options = ['Inventory is empty.']
 	else:
 		options = []
-		for item in settings.inventory:
+		for item in settings.player.combatant.inventory:
 			text = item.name
 			if item.equipment and item.equipment.is_equipped:
 				text = text + ' (on ' + item.equipment.slot + ')'
 			options.append(text)
 	index = menu(header, options, settings.INVENTORY_WIDTH)
-	if index is None or len(settings.inventory) == 0:
+	if index is None or len(settings.player.combatant.inventory) == 0:
 		return None
-	return settings.inventory[index].item
+	return settings.player.combatant.inventory[index].item
 
 
 def abilities_menu(header):
@@ -86,5 +86,22 @@ def information_menu(x, y):
 			return index
 
 
-def open_inventory_menu():
-	print("open inventory menu")
+def character_menu(header):
+	level_up_exp = settings.LEVEL_UP_BASE + settings.player.combatant.level * settings.LEVEL_UP_FACTOR
+	try:
+		num_dice = settings.player.combatant.get_equipped_in_slot('right hand').damage_dice[0]
+		dice_faces = settings.player.combatant.get_equipped_in_slot('right hand').damage_dice[1]
+	except AttributeError:
+		num_dice = str(1)
+		dice_faces = str(2)
+
+	msgbox("Character information\n\nLevel: " + str(settings.player.combatant.level) +
+		"\nExperience: " + str(settings.player.combatant.xp) +
+		"\nExperience to level up:" + str(level_up_exp - settings.player.combatant.xp) +
+		"\n\nMaximum Hp: " + str(settings.player.combatant.max_hp) +
+		"\nAttack: " + str(num_dice) + 'd' + str(dice_faces) +
+		"\nDefense: " + str(settings.player.combatant.defense) +
+		"\nStrength: " + str(settings.player.combatant.strn) +
+		"\nDexterity: " + str(settings.player.combatant.dex) +
+		"\nIntelligence: " + str(settings.player.combatant.intel) +
+		"\nConstitution: " + str(settings.player.combatant.con), settings.CHARACTER_SCREEN_WIDTH)

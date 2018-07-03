@@ -147,30 +147,12 @@ def is_blocked(x, y):
 	return False
 
 
-def get_equipped_in_slot(slot):
-	for obj in inventory:
-		if obj.equipment and obj.equipment.slot == slot and obj.equipment.is_equipped:
-			return obj.equipment
-	return None
-
-
 def from_dungeon_level(table):
 	# returns a value that depends on level. the table specifies what occurs at any given level
 	for (value, level) in reversed(table):
 		if dungeon_level >= level:
 			return value
 	return 0
-
-
-def get_all_equipped(obj):
-	if obj == player:
-		equipped_list = []
-		for item in inventory:
-			if item.equipment and item.equipment.is_equipped:
-				equipped_list.append(item.equipment)
-		return equipped_list
-	else:
-		return []
 
 
 def save_game():
