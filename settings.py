@@ -85,6 +85,7 @@ old_x = None
 old_y = None
 player = Object(0, 0, '@', 'player', tcod.white)
 player_action = ''
+running_direction = (0, 0)
 selection_coordinates = (0, 0)
 stairs_down = Object(0, 0, '>', 'stairs down', tcod.white)
 stairs_up = Object(0, 0, '<', 'stairs up', tcod.white)

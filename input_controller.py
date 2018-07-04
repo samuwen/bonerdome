@@ -4,14 +4,15 @@ import settings
 from level_manager import next_level
 from level_manager import previous_level
 from looking_controller import looking_input
+from map_handler import is_in_room
 from menu import msgbox
 from menu import abilities_menu
 from menu import character_menu
-
 from menu import inventory_menu
 from message import message
 from targeting import combatant_is_adjacent
 from time_controller import advance_time
+from utilities import add_tuples
 
 
 def input_controller(game_state):
@@ -28,6 +29,8 @@ def input_controller(game_state):
 			advance_time()
 	elif game_state == 'looking':
 		looking_input('info', handle_direction_keys())
+	elif game_state == 'running':
+		run_in_direction(settings.running_direction)
 
 
 def playing_input():
@@ -71,6 +74,10 @@ def playing_input():
 					return 'exit'
 				else:
 					msgbox("You cannot leave until you have the Dome of Boners")
+	if key_char == ',':
+		settings.game_state = 'running'
+		settings.running_direction = prompt_user_for_direction()
+		run_in_direction(settings.running_direction)
 	if key_char == 'c':
 		# show character stats
 		character_menu("Details about your character.\n")
@@ -119,3 +126,26 @@ def is_key_pressed():
 	if settings.key.vk != tcod.KEY_NONE and settings.key.pressed:
 		return True
 	return False
+
+
+def run_in_direction(direction):
+	in_room = is_in_room((settings.player.x, settings.player.y))
+	current_location = (settings.player.x, settings.player.y)
+	target_location = add_tuples(current_location, direction)
+	if not interrupt_auto():
+		settings.game_state = 'playing'
+	if not settings.is_blocked(*target_location):
+		settings.player.move(*direction)
+		settings.fov_recompute = True
+		advance_time()
+		if in_room != is_in_room((settings.player.x, settings.player.y)):
+			settings.game_state = 'playing'
+	else:
+		settings.game_state = 'playing'
+
+
+def interrupt_auto():
+	for obj in settings.objects:
+		if obj.combatant is not None and tcod.map_is_in_fov(settings.fov_map, obj.x, obj.y) and obj != settings.player:
+			return False
+	return True

@@ -8,6 +8,8 @@ from Object import Object
 from Rect import Rect
 from Tile import Tile
 
+rooms = []
+
 
 def create_room(room):
 	# go through the tiles in the rectangle and make them passable
@@ -30,13 +32,13 @@ def create_v_tunnel(y1, y2, x):
 
 
 def make_map():
+	global rooms
 	settings.objects = [settings.player]
 	# fill map with "unblocked" tiles
 	settings.dungeon_map = [[Tile(True)
 		for y in range(settings.MAP_HEIGHT)]
 			for x in range(settings.MAP_WIDTH)]
 
-	rooms = []
 	num_rooms = 0
 
 	for r in range(settings.MAX_ROOMS):
@@ -108,3 +110,10 @@ def place_stairs(x, y, char, name):
 		settings.stairs_down = stairs
 	settings.objects.append(stairs)
 	stairs.send_to_back()
+
+
+def is_in_room(location):
+	for room in rooms:
+		if room.x2 > location[0] > room.x1 and room.y2 > location[1] > room.y1:
+			return True
+	return False
