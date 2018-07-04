@@ -33,6 +33,7 @@ def create_v_tunnel(y1, y2, x):
 
 def make_map():
 	global rooms
+	rooms = []
 	settings.objects = [settings.player]
 	# fill map with "unblocked" tiles
 	settings.dungeon_map = [[Tile(True)

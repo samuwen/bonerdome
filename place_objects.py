@@ -28,29 +28,29 @@ def place_objects(room):
 	item_chances['sword'] = settings.from_dungeon_level([[5, 4]])
 	item_chances['shield'] = settings.from_dungeon_level([[15, 8]])
 
-	num_monsters = tcod.random_get_int(0, 0, max_monsters)
+	# num_monsters = tcod.random_get_int(0, 0, max_monsters)
 
-	for i in range(num_monsters):
-		x = tcod.random_get_int(0, room.x1 + 1, room.x2 - 1)
-		y = tcod.random_get_int(0, room.y1 + 1, room.y2 - 1)
-		ai_component = ai.BasicMonster()
+	# for i in range(num_monsters):
+	# 	x = tcod.random_get_int(0, room.x1 + 1, room.x2 - 1)
+	# 	y = tcod.random_get_int(0, room.y1 + 1, room.y2 - 1)
+	# 	ai_component = ai.BasicMonster()
 
-		if not settings.is_blocked(x, y):
-			choice = random_choice(monster_chances)
-			if choice == 'orc':
-				profession_component = Profession.Profession(profession='orc')
-				combatant_component = Combatant(xp=35, level=1, death_function=monster_death,
-					profession=profession_component)
-				monster = Object(x, y, 'o', 'orc', tcod.desaturated_green, blocks=True, combatant=combatant_component,
-					ai=ai_component)
-			elif choice == 'troll':
-				profession_component = Profession.Profession(profession='troll')
-				combatant_component = Combatant(xp=100, level=1, death_function=monster_death,
-					profession=profession_component)
-				monster = Object(x, y, 'T', 'troll', tcod.darkest_green, blocks=True, combatant=combatant_component,
-					ai=ai_component)
+	# 	if not settings.is_blocked(x, y):
+	# 		choice = random_choice(monster_chances)
+	# 		if choice == 'orc':
+	# 			profession_component = Profession.Profession(profession='orc')
+	# 			combatant_component = Combatant(xp=35, level=1, death_function=monster_death,
+	# 				profession=profession_component)
+	# 			monster = Object(x, y, 'o', 'orc', tcod.desaturated_green, blocks=True, combatant=combatant_component,
+	# 				ai=ai_component)
+	# 		elif choice == 'troll':
+	# 			profession_component = Profession.Profession(profession='troll')
+	# 			combatant_component = Combatant(xp=100, level=1, death_function=monster_death,
+	# 				profession=profession_component)
+	# 			monster = Object(x, y, 'T', 'troll', tcod.darkest_green, blocks=True, combatant=combatant_component,
+	# 				ai=ai_component)
 
-			settings.objects.append(monster)
+	# 		settings.objects.append(monster)
 
 	num_items = tcod.random_get_int(0, 0, max_items)
 	for i in range(num_items):

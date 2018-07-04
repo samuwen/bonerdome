@@ -11,8 +11,8 @@ SCREEN_WIDTH = 80
 SCREEN_HEIGHT = 50
 
 # Map size
-MAP_WIDTH = 75
-MAP_HEIGHT = 43
+MAP_WIDTH = 100
+MAP_HEIGHT = 100
 
 # Panel console height
 PANEL_HEIGHT = 7
@@ -43,9 +43,9 @@ LEVEL_UP_SCREEN_WIDTH = 40
 CHARACTER_SCREEN_WIDTH = 30
 
 # Parameters for dungeon generator
-ROOM_MAX_SIZE = 10
-ROOM_MIN_SIZE = 6
-MAX_ROOMS = 20
+ROOM_MAX_SIZE = 20
+ROOM_MIN_SIZE = 12
+MAX_ROOMS = 30
 
 # Spells
 HEAL_AMOUNT = 40
@@ -65,6 +65,7 @@ panel = tcod.console_new(SCREEN_WIDTH, PANEL_HEIGHT)
 
 # Runtime global variables
 abilities = []
+an_x = 0
 boner_dome = Object(0, 0, 'D', 'boner_dome', tcod.yellow)
 dungeon_level = 1
 dungeon_map = []
@@ -91,8 +92,8 @@ stairs_down = Object(0, 0, '>', 'stairs down', tcod.white)
 stairs_up = Object(0, 0, '<', 'stairs up', tcod.white)
 
 keycode_to_direction_tuple_map = {
-	tcod.KEY_KP8: (0, -1),
 	tcod.KEY_UP: (0, -1),
+	tcod.KEY_KP8: (0, -1),
 	tcod.KEY_KP9: (1, -1),
 	tcod.KEY_RIGHT: (1, 0),
 	tcod.KEY_KP6: (1, 0),
@@ -194,7 +195,7 @@ def save_level_state():
 
 def load_game():
 	global dungeon_map, objects, player, inventory, game_messages, game_state, stairs_down, stairs_up, dungeon_level
-	global map_dict
+	global map_dict, highlight_state
 	file = shelve.open('savegame', 'r')
 	dungeon_map = file['map']
 	objects = file['objects']
@@ -207,6 +208,7 @@ def load_game():
 	if file['stairs_up_index'] is not None:
 		stairs_up = objects[file['stairs_up_index']]
 	dungeon_level = file['dungeon_level']
+	highlight_state = 'play'
 	file.close()
 
 	initialize_fov()
