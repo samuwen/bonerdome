@@ -4,6 +4,7 @@ import settings
 from level_manager import next_level
 from level_manager import previous_level
 from looking_controller import looking_input
+from map_handler import is_at_vertex
 from map_handler import is_in_room
 from menu import msgbox
 from menu import abilities_menu
@@ -130,7 +131,8 @@ def is_key_pressed():
 
 
 def run_in_direction(direction):
-	in_room = is_in_room((settings.player.x, settings.player.y))
+	in_room = is_in_room(settings.player.x, settings.player.y)
+	at_vertex = is_at_vertex(settings.player.x, settings.player.y)
 	current_location = (settings.player.x, settings.player.y)
 	target_location = add_tuples(current_location, direction)
 	if not interrupt_auto():
@@ -139,7 +141,9 @@ def run_in_direction(direction):
 		settings.player.move(*direction)
 		settings.fov_recompute = True
 		advance_time()
-		if in_room != is_in_room((settings.player.x, settings.player.y)):
+		if in_room != is_in_room(settings.player.x, settings.player.y):
+			settings.game_state = 'playing'
+		if at_vertex != is_at_vertex(settings.player.x, settings.player.y):
 			settings.game_state = 'playing'
 	else:
 		settings.game_state = 'playing'

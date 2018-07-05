@@ -21,12 +21,16 @@ def create_room(room):
 
 def create_h_tunnel(x1, x2, y):
 	for x in range(min(x1, x2), max(x1, x2) + 1):
+		if settings.dungeon_map[x][y].blocked is False:
+			settings.dungeon_map[x][y].vertex = True
 		settings.dungeon_map[x][y].blocked = False
 		settings.dungeon_map[x][y].block_sight = False
 
 
 def create_v_tunnel(y1, y2, x):
 	for y in range(min(y1, y2), max(y1, y2) + 1):
+		if settings.dungeon_map[x][y].blocked is False:
+			settings.dungeon_map[x][y].vertex = True
 		settings.dungeon_map[x][y].blocked = False
 		settings.dungeon_map[x][y].block_sight = False
 
@@ -113,8 +117,14 @@ def place_stairs(x, y, char, name):
 	stairs.send_to_back()
 
 
-def is_in_room(location):
+def is_in_room(x, y):
 	for room in rooms:
-		if room.x2 > location[0] > room.x1 and room.y2 > location[1] > room.y1:
+		if room.x2 > x > room.x1 and room.y2 > y > room.y1:
 			return True
+	return False
+
+
+def is_at_vertex(x, y):
+	if settings.dungeon_map[x][y].vertex is True:
+		return True
 	return False
