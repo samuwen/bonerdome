@@ -19,7 +19,7 @@ if __name__ == "__main__":
 		tcod.console_print_ex(0, settings.SCREEN_WIDTH // 2, settings.SCREEN_HEIGHT - 2, tcod.BKGND_NONE, tcod.CENTER,
 			'By Jack Chick')
 
-		choice = menu('', ['Play a new game', 'Continue last game', 'Quit'], 24)
+		choice = menu('', ['Play a new game', 'Continue last game', 'Quit'], 24, new_game=True)
 
 		if choice == 0:
 			game = new_game()

@@ -2,7 +2,7 @@ import libtcodpy as tcod
 import settings
 
 
-def menu(header, options, width):
+def menu(header, options, width, new_game=None):
 	if len(options) > 26:
 		raise ValueError('Cannot have a menu with more than 26 options')
 	# calculate the total height for the header (after auto-wrap) and one line per option
@@ -26,9 +26,12 @@ def menu(header, options, width):
 		y += 1
 		letter_index += 1
 
-	x = settings.SCREEN_WIDTH // 2 - width // 2
-	y = settings.SCREEN_HEIGHT // 2 - height // 2
-	tcod.console_blit(window, 0, 0, width, height, 0, x, y, 1.0, 0.7)
+	x = 0
+	y = 0
+	if new_game:
+		x = settings.SCREEN_WIDTH // 2 - width // 2
+		y = settings.SCREEN_HEIGHT // 2 - height // 2
+	tcod.console_blit(window, 0, 0, width, height, 0, x, y, 1.0, 1.0)
 
 	# present console to the player and wait for keypress
 	tcod.console_flush()
