@@ -38,7 +38,16 @@ def render_all():
 			obj.draw()
 	settings.player.draw()
 
-	tcod.console_blit(settings.con, 0, 0, settings.MAP_WIDTH, settings.MAP_HEIGHT, 0, 0, 0)
+	# blitting the settings.con console onto the screen is how we render what is explicitly visible. once we've identified that, 
+	# we'll need to create the map with its origin point and set the given player location in it. Then we either need to scroll the map
+	# with the player, or have it so that the map re-draws when the player gets to the end. The initial screen should display
+	# on the player.
+
+	half_map_x = settings.SCREEN_WIDTH // 2
+	half_map_y = settings.SCREEN_HEIGHT // 2
+
+	tcod.console_blit(settings.con, settings.player.x - half_map_x, settings.player.y - half_map_y,
+		settings.MAP_WIDTH, settings.MAP_HEIGHT, 0, 0, 0)
 	display_highlight_square()
 	tcod.console_blit(settings.targeting, 0, 0, settings.MAP_WIDTH, settings.MAP_HEIGHT, 0, 0, 0, 0.0, 0.15)
 	tcod.console_clear(settings.targeting)
