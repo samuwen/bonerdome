@@ -16,6 +16,9 @@ def new_game():
 
 	profession = choose_job()
 
+	if profession is None:
+		return None
+
 	profession_component = Profession(profession=profession)
 	combatant_component = Combatant(xp=0, level=1, death_function=player_death,
 		profession=profession_component)
@@ -44,3 +47,4 @@ def new_game():
 	settings.player.combatant.inventory.append(obj)
 	settings.player.combatant.toggle_equipment_state(equipment_component)
 	obj.always_visible = True
+	return "go"

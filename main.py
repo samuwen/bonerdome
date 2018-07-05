@@ -22,8 +22,9 @@ if __name__ == "__main__":
 		choice = menu('', ['Play a new game', 'Continue last game', 'Quit'], 24)
 
 		if choice == 0:
-			new_game()
-			play_game()
+			game = new_game()
+			if game is not None:
+				play_game()
 		elif choice == 1:
 			try:
 				settings.load_game()
