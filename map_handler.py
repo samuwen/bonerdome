@@ -73,7 +73,7 @@ def make_map():
 				# connect all subsequent rooms with tunnels
 
 				# center coordinates of previous room
-				(prev_x, prev_y) = rooms[num_rooms - 1].center()
+				(prev_x, prev_y) = rooms[tcod.random_get_int(0, 0, num_rooms - 1)].center()
 
 				# get a 1 or a 0
 				if tcod.random_get_int(0, 0, 1) == 1:
