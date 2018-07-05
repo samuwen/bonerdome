@@ -18,9 +18,11 @@ class Profession:
 	# Users only have those skills for which they have achieved the proper level
 	def get_abilities_for_level(self):
 		ability_list = self.profession_component[4]
+		abilities = []
 		for index, ability in enumerate(ability_list):
 			if int(index) <= self.owner.level:
-				self.owner.abilities.append(Ability(*ability_data.get_ability_data(ability)))
+				abilities.append(Ability(*ability_data.get_ability_data(ability)))
+		self.owner.abilities = abilities
 
 	def get_bonus_values(self, value):
 		value_arr = [

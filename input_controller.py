@@ -48,6 +48,7 @@ def playing_input():
 		chosen_item = inventory_menu('Press the key next to the item to use it, or any other key to cancel.\n')
 		if chosen_item is not None:
 			chosen_item.use(settings.player)
+			advance_time()
 	if key_char == 's':
 		chosen_ability = abilities_menu('Press the key next to the skill to use it, or any other key to cancel.\n')
 		if chosen_ability is not None:

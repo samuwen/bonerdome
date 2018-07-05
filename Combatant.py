@@ -23,6 +23,9 @@ class Combatant:
 		self.hit_dice = profession.hit_dice
 		self._base_max_hp = self.hit_dice[1] + self.profession.get_bonus_values(self.con)
 		self.hp = self._base_max_hp
+		if self.level > 1:
+			for i in range(self.level - 1):
+				self.level_up()
 		self._base_defense = 10 + self.profession.get_bonus_values(self.dex)
 		self._base_power = self.profession.get_bonus_values(self.strn)
 		self.abilities = []
@@ -137,3 +140,9 @@ class Combatant:
 	def remove_item_from_slot(self, item):
 		self.equipment_slots[item.slot] = None
 		item.is_equipped = False
+
+	def level_up(self):
+		number = roll_dice(self.hit_dice) + self.profession.get_bonus_values(self.con)
+		self.hp += number
+		self._base_max_hp += number
+		self.profession.get_abilities_for_level()
