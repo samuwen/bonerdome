@@ -23,8 +23,7 @@ class Ability:
 		elif self.current_cooldown_time != 0:
 			message("You're too tired to use that ability!")
 		else:
-			# print("max range", str(max_range))
-			result = self.use_function(user, target, max_range)
+			result = self.use_function(user, target, max_range, self.damage, self.distance)
 			if result == 'fail':
 				message(self.fail_message, tcod.light_red)
 			elif result == 'success':

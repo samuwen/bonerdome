@@ -36,17 +36,22 @@ def looking_input(selection_action, direction_keys=None, max_range=None):
 			settings.old_x = None
 			settings.old_y = None
 
+	target_in_map_coords = settings.translate_screen_coords_to_map(*settings.selection_coordinates)
 	if settings.mouse.lbutton_pressed or settings.key.vk == tcod.KEY_ENTER:
 		if selection_action == 'info':
 			information_menu(*settings.selection_coordinates)
 		elif selection_action == 'target':
-			if settings.player.distance(*settings.selection_coordinates) <= max_range:
+			if settings.player.distance(*target_in_map_coords) <= max_range:
+				# change the screen selection to the actual map coordinates we want
+				(x, y) = settings.selection_coordinates
+				settings.selection_coordinates = ((x - settings.SCREEN_WIDTH // 2) + settings.player.x,
+					(y - settings.SCREEN_HEIGHT // 2) + settings.player.y)
 				return 'target_selected'
 			else:
 				message("Target is out of range!", tcod.lighter_red)
 
 	if settings.highlight_state == 'target' or settings.highlight_state == 'target-out-of-bound':
-		if settings.player.distance(*settings.selection_coordinates) > max_range:
+		if settings.player.distance(*target_in_map_coords) > max_range:
 			settings.highlight_state = 'target-out-of-bound'
-		elif settings.player.distance(*settings.selection_coordinates) <= max_range:
+		elif settings.player.distance(*target_in_map_coords) <= max_range:
 			settings.highlight_state = 'target'

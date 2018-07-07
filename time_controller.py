@@ -8,3 +8,5 @@ def advance_time():
 		if obj.combatant:
 			for ability in obj.combatant.abilities:
 				ability.advance_cooldown_timer()
+		if obj.combatant and obj.combatant.target:
+			obj.combatant.direction = obj.combatant.get_direction_to_target(obj.combatant.target)

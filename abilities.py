@@ -5,7 +5,6 @@ import settings
 
 from menu import msgbox
 from message import message
-from targeting import get_target
 from targeting import handle_basic_targeting
 from time_controller import advance_time
 from utilities import add_tuples
@@ -31,38 +30,25 @@ def cast_lightning():
 
 
 def cast_confuse(user=None, target=None, max_range=settings.CONFUSE_RANGE):
-	# find closest enemy in range and confuse it
-	monster = targeted_ability(max_range)
+	monster = user.combatant.get_target(max_range)
 	if monster == 'cancelled':
 		return 'cancelled'
 	old_ai = monster.ai
 	monster.ai = ai.ConfusedMonster(old_ai)
 	monster.ai.owner = monster
 	message(monster.name + ' looks confused!', tcod.green)
-	settings.highlight_state = 'play'
 	advance_time()
 
 
-def cast_hold_in_place(player=None, target=None, max_range=settings.HOLD_RANGE):
-	monster = targeted_ability(max_range)
+def cast_hold_in_place(user=None, target=None, max_range=settings.HOLD_RANGE):
+	monster = user.combatant.get_target(max_range)
 	if monster == 'cancelled':
 		return 'cancelled'
 	old_ai = monster.ai
 	monster.ai = ai.HeldMonster(old_ai)
 	monster.ai.owner = monster
 	message(monster.name + ' looks unable to move!', tcod.green)
-	settings.highlight_state = 'play'
 	advance_time()
-
-
-def targeted_ability(max_range):
-	message("Select a target. Right click or Escape to cancel", tcod.light_cyan)
-	settings.highlight_state = 'target'
-	monster = get_target(max_range)
-	if monster is None:
-		settings.highlight_state = 'play'
-		return 'cancelled'
-	return monster
 
 
 def cast_fireball():
@@ -106,3 +92,29 @@ def fire_beam_in_direction(start_location, direction, distance):
 		distance -= 1
 		loc = add_tuples(loc, direction)
 	return affected_list
+
+
+def backflip(user, target=None, max_range=None, damage=None, distance=None):
+	target = user.combatant.get_target(max_range)
+	if target is None:
+		return 'cancelled'
+	# get the direction that, if the user keeps on that line, will move them 2 directly back from the target
+	direction = target.combatant.get_direction_to_target(user)
+	(x, y) = user.combatant.get_coordinates_from_direction(direction)
+	for i in range(distance):
+		user.move(x, y)
+	advance_time()
+	return 'success'
+
+
+def frontflip(user, target=None, max_range=None, damage=None, distance=None):
+	target = user.combatant.get_target(max_range)
+	if target is None:
+		return 'cancelled'
+	direction = user.combatant.get_direction_to_target(target)
+	(x, y) = user.combatant.get_coordinates_from_direction(direction)
+	for i in range(distance):
+		user.x += x
+		user.y += y
+	user.combatant.direction = user.combatant.get_direction_to_target(target)
+	return 'success'

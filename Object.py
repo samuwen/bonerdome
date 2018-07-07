@@ -1,8 +1,6 @@
 import libtcodpy as tcod
 import math
-import random
 import settings
-import utilities
 
 from Item import Item
 
@@ -10,7 +8,7 @@ from Item import Item
 class Object:
 	# This is a generic object class. Character, enemy, item, etc
 	# Objects always have a representative character on the screen
-	def __init__(self, x, y, char, name, color, direction=None, blocks=False, combatant=None, ai=None,
+	def __init__(self, x, y, char, name, color, blocks=False, combatant=None, ai=None,
 		item=None, always_visible=False, equipment=None):
 		self.x = x
 		self.y = y
@@ -38,15 +36,10 @@ class Object:
 			self.item = Item()
 			self.item.owner = self
 
-		self.direction = direction
-		if direction is None:
-			self.direction = random.choice(['up', 'right', 'left', 'down'])
-
 	def move(self, dx, dy):
 		if not settings.is_blocked(self.x + dx, self.y + dy):
 			self.x += dx
 			self.y += dy
-		self.set_direction(dx, dy)
 
 	def move_astar(self, target):
 		# Create a FOV map for the actor in question
@@ -77,7 +70,7 @@ class Object:
 			x, y = tcod.path_walk(my_path, True)
 			if x or y:
 				# set self's coords to the next path tile
-				self.set_direction(x - self.x, y - self.y)
+				self.combatant.set_direction(x - self.x, y - self.y)
 				self.x = x
 				self.y = y
 		else:
@@ -118,22 +111,3 @@ class Object:
 	def clear(self):
 		# erase the character that represents this object
 		tcod.console_put_char(settings.con, self.x, self.y, ' ', tcod.BKGND_NONE)
-
-	def set_direction(self, x, y):
-		if x < 0 and y == 0:
-			self.direction = 'left'
-		elif x > 0 and y == 0:
-			self.direction = 'right'
-		elif y < 0 and x == 0:
-			self.direction = 'up'
-		elif y > 0 and x == 0:
-			self.direction = 'down'
-		elif x < 0 and y < 0:
-			self.direction = 'up_left'
-		elif x > 0 and y < 0:
-			self.direction = 'up_right'
-		elif x < 0 and y > 0:
-			self.direction = 'down_left'
-		elif x > 0 and y > 0:
-			self.direction = 'down_right'
-		utilities.print_debug(self.direction)

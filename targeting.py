@@ -2,7 +2,10 @@ import libtcodpy as tcod
 import settings
 
 from looking_controller import looking_input
+from message import message
 from render import handle_rendering_tasks
+
+target = None
 
 
 def handle_basic_targeting(x, y, max_range=None):
@@ -18,26 +21,30 @@ def is_target_valid(x, y, max_range=None):
 	return False
 
 
-def get_target(max_range):
-	while True:
-		tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS | tcod.EVENT_MOUSE, settings.key, settings.mouse)
-		try:
-			is_direction = settings.keycode_to_direction_tuple_map[settings.key.vk]
-		except KeyError:
-			is_direction = None
+def choose_target(max_range):
+	global target
+	if target is None:
+		while True:
+			tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS | tcod.EVENT_MOUSE, settings.key, settings.mouse)
+			try:
+				is_direction = settings.keycode_to_direction_tuple_map[settings.key.vk]
+			except KeyError:
+				is_direction = None
 
-		result = looking_input('target', direction_keys=is_direction, max_range=max_range)
-		handle_rendering_tasks()
-		# returns a clicked monster in FOV up to a specific range
+			result = looking_input('target', direction_keys=is_direction, max_range=max_range)
+			handle_rendering_tasks()
+			# returns a clicked monster in FOV up to a specific range
 
-		if result == 'target_selected':
-			(x, y) = settings.selection_coordinates
+			if result == 'target_selected':
+				(x, y) = settings.selection_coordinates
 
-			for obj in settings.objects:
-				if obj.x == x and obj.y == y and obj.combatant and obj != settings.player:
-					return obj
-		elif result == 'exit':
-			return None
+				for obj in settings.objects:
+					if obj.x == x and obj.y == y and obj.combatant and obj != settings.player:
+						return obj
+			elif result == 'exit':
+				return None
+	else:
+		return target
 
 
 def combatant_is_adjacent(x, y):
@@ -64,16 +71,11 @@ def closest_monster(max_range):
 	return closest_enemy
 
 
-def get_names_at_target_location(x, y):
-	# return a string with the names of all objects under the mouse
-	# if objects are combatants, we get the direction they are facing too
-	names = []
-	for obj in settings.objects:
-		if obj.x == x and obj.y == y and tcod.map_is_in_fov(settings.fov_map, obj.x, obj.y):
-			if obj.combatant:
-				names.append(obj.name + " (facing: " + obj.direction + ")")
-			else:
-				names.append(obj.name)
-
-	names = ', '.join(names)
-	return names.capitalize()
+def select_target(max_range):
+	message("Select a target. Right click or Escape to cancel", tcod.light_cyan)
+	settings.highlight_state = 'target'
+	monster = choose_target(max_range)
+	if monster is None:
+		settings.highlight_state = 'play'
+		return 'cancelled'
+	return monster

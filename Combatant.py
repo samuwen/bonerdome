@@ -1,7 +1,8 @@
 import libtcodpy as tcod
+import random
 import settings
+import targeting
 
-from Equipment import Equipment
 from message import message
 from handle_random import roll_dice
 from handle_random import roll_to_hit
@@ -9,7 +10,7 @@ from handle_random import roll_to_hit
 
 class Combatant:
 	# combat-related properties and methods(monster, player, NPC)
-	def __init__(self, xp, level, death_function=None, profession=None):
+	def __init__(self, xp, level, death_function=None, profession=None, target=None, direction=None):
 		self.level = level
 		self.xp = xp
 		self.death_function = death_function
@@ -43,6 +44,10 @@ class Combatant:
 			"right index finger": None,
 			"feet": None
 		}
+		self.target = target
+		self.direction = direction
+		if direction is None:
+			self.direction = random.choice(['up', 'right', 'left', 'down'])
 
 	def attack(self, target):
 		to_hit = roll_to_hit()
@@ -146,3 +151,68 @@ class Combatant:
 		self.hp += number
 		self._base_max_hp += number
 		self.profession.get_abilities_for_level()
+
+	def set_target(self, max_range=999):
+		self.target = targeting.select_target(max_range=max_range)
+		settings.highlight_state = 'play'
+		if self.target != 'cancelled':
+			enemy_direction = self.get_direction_to_target(self.target)
+			self.direction = enemy_direction
+		else:
+			self.clear_target()
+			return 'cancelled'
+
+	def get_target(self, max_range):
+		if self.target is None:
+			self.set_target(max_range=max_range)
+		return self.target
+
+	def clear_target(self):
+		self.target = None
+
+	def get_direction_to_target(self, other):
+		x_diff = other.x - self.owner.x
+		y_diff = other.y - self.owner.y
+
+		return self.get_direction_from_coordinates(x_diff, y_diff)
+
+	def set_direction(self, x=None, y=None, direction=None):
+		if direction is None:
+			direction = self.get_direction_from_coordinates(x, y)
+		self.direction = direction
+
+	def get_direction_from_coordinates(self, x, y):
+		if x < 0 and y == 0:
+			return 'left'
+		elif x > 0 and y == 0:
+			return 'right'
+		elif y < 0 and x == 0:
+			return 'up'
+		elif y > 0 and x == 0:
+			return 'down'
+		elif x < 0 and y < 0:
+			return 'up left'
+		elif x > 0 and y < 0:
+			return 'up right'
+		elif x < 0 and y > 0:
+			return 'down left'
+		elif x > 0 and y > 0:
+			return 'down right'
+
+	def get_coordinates_from_direction(self, direction):
+		if direction == 'left':
+			return (-1, 0)
+		elif direction == 'right':
+			return (1, 0)
+		elif direction == 'up':
+			return (0, -1)
+		elif direction == 'down':
+			return (0, 1)
+		elif direction == 'up left':
+			return (-1, -1)
+		elif direction == 'up right':
+			return (1, -1)
+		elif direction == 'down left':
+			return (-1, 1)
+		elif direction == 'down right':
+			return (1, 1)

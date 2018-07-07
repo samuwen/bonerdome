@@ -38,13 +38,13 @@ def render_all():
 			obj.draw()
 	settings.player.draw()
 
-	half_map_x = settings.SCREEN_WIDTH // 2
-	half_map_y = settings.SCREEN_HEIGHT // 2
+	half_screen_x = settings.SCREEN_WIDTH // 2
+	half_screen_y = settings.SCREEN_HEIGHT // 2
 
-	tcod.console_blit(settings.con, settings.player.x - half_map_x, settings.player.y - half_map_y,
+	tcod.console_blit(settings.con, settings.player.x - half_screen_x, settings.player.y - half_screen_y,
 		settings.MAP_WIDTH, settings.MAP_HEIGHT, 0, 0, 0)
 	display_highlight_square()
-	tcod.console_blit(settings.targeting, 0, 0, settings.MAP_WIDTH, settings.MAP_HEIGHT, 0, 0, 0, 0.0, 0.15)
+	tcod.console_blit(settings.targeting, 0, 0, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT, 0, 0, 0, 0.0, 0.15)
 	tcod.console_clear(settings.targeting)
 
 	# prepare to render the GUI panel
@@ -121,10 +121,11 @@ def get_names_at_target_location(x, y):
 	# return a string with the names of all objects under the mouse
 	# if objects are combatants, we get the direction they are facing too
 	names = []
+	(x1, y1) = settings.translate_screen_coords_to_map(x, y)
 	for obj in settings.objects:
-		if obj.x == x and obj.y == y and tcod.map_is_in_fov(settings.fov_map, obj.x, obj.y):
+		if obj.x == x1 and obj.y == y1 and tcod.map_is_in_fov(settings.fov_map, obj.x, obj.y):
 			if obj.combatant:
-				names.append(obj.name + " (facing: " + obj.direction + ")")
+				names.append(obj.name + " (facing: " + obj.combatant.direction + ") ")
 			else:
 				names.append(obj.name)
 

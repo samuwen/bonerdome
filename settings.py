@@ -45,7 +45,7 @@ CHARACTER_SCREEN_WIDTH = 30
 # Parameters for dungeon generator
 ROOM_MAX_SIZE = 18
 ROOM_MIN_SIZE = 6
-MAX_ROOMS = 40
+MAX_ROOMS = 1
 
 # Spells
 HEAL_AMOUNT = 40
@@ -155,6 +155,11 @@ def from_dungeon_level(table):
 		if dungeon_level >= level:
 			return value
 	return 0
+
+
+def translate_screen_coords_to_map(x, y):
+	return ((x - SCREEN_WIDTH // 2) + player.x,
+		(y - SCREEN_HEIGHT // 2) + player.y)
 
 
 def save_game():

@@ -83,6 +83,10 @@ def playing_input():
 	if key_char == 'c':
 		# show character stats
 		character_menu("Details about your character.\n")
+	if key_char == 't':
+		settings.player.combatant.set_target()
+	if key_char == 'o':
+		message('target is ' + settings.player.combatant.target.name, tcod.blue)
 
 	settings.selection_coordinates = (settings.mouse.cx, settings.mouse.cy)
 
