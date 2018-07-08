@@ -49,9 +49,11 @@ class Combatant:
 		self.target = target
 		self.direction = direction
 		if direction is None:
-			self.direction = random.choice(['up', 'right', 'left', 'down'])
+			self.direction = random.choice(['north', 'east', 'west', 'south'])
 
-	def attack(self, target):
+	def attack(self, target, behind_target=False):
+		if behind_target is True:
+			return self.backstab(target)
 		to_hit = roll_to_hit()
 		if to_hit > target.combatant.defense:
 			damage = self.power - target.combatant.damage_modifier
@@ -71,6 +73,12 @@ class Combatant:
 		else:
 			message(self.owner.name.capitalize() + ' attacks ' + target.name.capitalize() +
 				' but doesn\'t do any damage', tcod.orange)
+
+	def backstab(self, target):
+		hp = target.combatant.hp
+		message(self.owner.name.capitalize() + ' backstabs ' + target.name.capitalize() + 'for ' +
+			str(hp) + ' damage!!', tcod.darkest_red)
+		target.combatant.take_damage(hp)
 
 	def take_damage(self, damage):
 		# apply damage if possible
@@ -176,45 +184,9 @@ class Combatant:
 		x_diff = other.x - self.owner.x
 		y_diff = other.y - self.owner.y
 
-		return self.get_direction_from_coordinates(x_diff, y_diff)
+		return targeting.get_direction_from_coordinates(x_diff, y_diff)
 
 	def set_direction(self, x=None, y=None, direction=None):
 		if direction is None:
-			direction = self.get_direction_from_coordinates(x, y)
+			direction = targeting.get_direction_from_coordinates(x, y)
 		self.direction = direction
-
-	def get_direction_from_coordinates(self, x, y):
-		if x < 0 and y == 0:
-			return 'left'
-		elif x > 0 and y == 0:
-			return 'right'
-		elif y < 0 and x == 0:
-			return 'up'
-		elif y > 0 and x == 0:
-			return 'down'
-		elif x < 0 and y < 0:
-			return 'up left'
-		elif x > 0 and y < 0:
-			return 'up right'
-		elif x < 0 and y > 0:
-			return 'down left'
-		elif x > 0 and y > 0:
-			return 'down right'
-
-	def get_coordinates_from_direction(self, direction):
-		if direction == 'left':
-			return (-1, 0)
-		elif direction == 'right':
-			return (1, 0)
-		elif direction == 'up':
-			return (0, -1)
-		elif direction == 'down':
-			return (0, 1)
-		elif direction == 'up left':
-			return (-1, -1)
-		elif direction == 'up right':
-			return (1, -1)
-		elif direction == 'down left':
-			return (-1, 1)
-		elif direction == 'down right':
-			return (1, 1)

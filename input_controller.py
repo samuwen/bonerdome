@@ -12,6 +12,7 @@ from menu import character_menu
 from menu import inventory_menu
 from message import message
 from targeting import combatant_is_adjacent
+from targeting import is_attack_from_behind
 from time_controller import end_player_turn
 from utilities import add_tuples
 
@@ -110,11 +111,12 @@ def player_move_or_attack(dx, dy):
 
 	# attack if target found, otherwise move
 	if target is not None:
-		settings.player.combatant.attack(target)
-		settings.player.combatant.set_direction(dx, dy)
+		behind_target = is_attack_from_behind(settings.player, target)
+		settings.player.combatant.attack(target, behind_target)
 	else:
 		settings.player.move(dx, dy)
 		settings.fov_recompute = True
+	settings.player.combatant.set_direction(dx, dy)
 
 
 def prompt_user_for_direction():

@@ -5,6 +5,7 @@ import settings
 
 from menu import msgbox
 from message import message
+from targeting import get_coordinates_from_direction
 from targeting import handle_basic_targeting
 from time_controller import end_player_turn
 from utilities import add_tuples
@@ -112,7 +113,7 @@ def frontflip(user, target=None, max_range=None, damage=None, distance=None):
 	if target is None:
 		return 'cancelled'
 	direction = user.combatant.get_direction_to_target(target)
-	(x, y) = user.combatant.get_coordinates_from_direction(direction)
+	(x, y) = get_coordinates_from_direction(direction)
 	for i in range(distance):
 		user.x += x
 		user.y += y

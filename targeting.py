@@ -56,6 +56,15 @@ def combatant_is_adjacent(x, y):
 	return None
 
 
+def is_attack_from_behind(user, target):
+	direction = target.combatant.direction
+	attack_direction = user.combatant.get_direction_to_target(target)
+
+	if direction == attack_direction:
+		return True
+	return False
+
+
 def closest_monster(max_range):
 	# find closest enemy, up to a maximum range, and in the player's FOV
 	closest_enemy = None
@@ -79,3 +88,41 @@ def select_target(max_range):
 		settings.highlight_state = 'play'
 		return 'cancelled'
 	return monster
+
+
+def get_direction_from_coordinates(x, y):
+	if x < 0 and y == 0:
+		return 'west'
+	elif x > 0 and y == 0:
+		return 'east'
+	elif y < 0 and x == 0:
+		return 'north'
+	elif y > 0 and x == 0:
+		return 'south'
+	elif x < 0 and y < 0:
+		return 'northwest'
+	elif x > 0 and y < 0:
+		return 'northeast'
+	elif x < 0 and y > 0:
+		return 'southwest'
+	elif x > 0 and y > 0:
+		return 'southeast'
+
+
+def get_coordinates_from_direction(direction):
+	if direction == 'west':
+		return (-1, 0)
+	elif direction == 'east':
+		return (1, 0)
+	elif direction == 'north':
+		return (0, -1)
+	elif direction == 'south':
+		return (0, 1)
+	elif direction == 'northwest':
+		return (-1, -1)
+	elif direction == 'northeast':
+		return (1, -1)
+	elif direction == 'southwest':
+		return (-1, 1)
+	elif direction == 'southeast':
+		return (1, 1)
