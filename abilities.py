@@ -6,7 +6,7 @@ import settings
 from menu import msgbox
 from message import message
 from targeting import handle_basic_targeting
-from time_controller import advance_time
+from time_controller import end_player_turn
 from utilities import add_tuples
 
 
@@ -37,7 +37,7 @@ def cast_confuse(user=None, target=None, max_range=settings.CONFUSE_RANGE):
 	monster.ai = ai.ConfusedMonster(old_ai)
 	monster.ai.owner = monster
 	message(monster.name + ' looks confused!', tcod.green)
-	advance_time()
+	end_player_turn()
 
 
 def cast_hold_in_place(user=None, target=None, max_range=settings.HOLD_RANGE):
@@ -48,7 +48,7 @@ def cast_hold_in_place(user=None, target=None, max_range=settings.HOLD_RANGE):
 	monster.ai = ai.HeldMonster(old_ai)
 	monster.ai.owner = monster
 	message(monster.name + ' looks unable to move!', tcod.green)
-	advance_time()
+	end_player_turn()
 
 
 def cast_fireball():
@@ -79,7 +79,7 @@ def smash(player, target, max_range):
 	for obj in targets:
 		message(obj.name.capitalize() + " takes " + str(damage) + " damage.")
 		obj.combatant.take_damage(damage)
-	advance_time()
+	end_player_turn()
 
 
 def fire_beam_in_direction(start_location, direction, distance):
@@ -103,7 +103,7 @@ def backflip(user, target=None, max_range=None, damage=None, distance=None):
 	(x, y) = user.combatant.get_coordinates_from_direction(direction)
 	for i in range(distance):
 		user.move(x, y)
-	advance_time()
+	end_player_turn()
 	return 'success'
 
 

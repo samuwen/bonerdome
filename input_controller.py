@@ -12,7 +12,7 @@ from menu import character_menu
 from menu import inventory_menu
 from message import message
 from targeting import combatant_is_adjacent
-from time_controller import advance_time
+from time_controller import end_player_turn
 from utilities import add_tuples
 
 
@@ -27,7 +27,7 @@ def input_controller(game_state):
 		player_action = playing_input()
 		if type(player_action) is tuple:
 			player_move_or_attack(*player_action)
-			advance_time()
+			end_player_turn()
 	elif game_state == 'looking':
 		looking_input('info', handle_direction_keys())
 	elif game_state == 'running':
@@ -49,7 +49,7 @@ def playing_input():
 		chosen_item = inventory_menu('Press the key next to the item to use it, or any other key to cancel.\n')
 		if chosen_item is not None:
 			chosen_item.use(settings.player)
-			advance_time()
+			end_player_turn()
 	if key_char == 's':
 		chosen_ability = abilities_menu('Press the key next to the skill to use it, or any other key to cancel.\n')
 		if chosen_ability is not None:
@@ -144,7 +144,7 @@ def run_in_direction(direction):
 	if not settings.is_blocked(*target_location):
 		settings.player.move(*direction)
 		settings.fov_recompute = True
-		advance_time()
+		end_player_turn()
 		if in_room != is_in_room(settings.player.x, settings.player.y):
 			settings.game_state = 'playing'
 		if at_vertex != is_at_vertex(settings.player.x, settings.player.y):

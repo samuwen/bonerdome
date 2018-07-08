@@ -1,10 +1,6 @@
 import settings
 
 
-def advance_time():
-	end_player_turn()
-
-
 def end_player_turn():
 	counter = settings.player.combatant.speed_value
 	for obj in settings.objects:
