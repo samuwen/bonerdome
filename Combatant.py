@@ -21,6 +21,8 @@ class Combatant:
 		self.dex = profession.dex
 		self.con = profession.con
 		self.intel = profession.intel
+		self.current_speed = 0
+		self.speed_value = profession.speed
 		self.hit_dice = profession.hit_dice
 		self._base_max_hp = self.hit_dice[1] + self.profession.get_bonus_values(self.con)
 		self.hp = self._base_max_hp

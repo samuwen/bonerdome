@@ -28,8 +28,7 @@ def place_objects(room):
 	item_chances['sword'] = settings.from_dungeon_level([[5, 4]])
 	item_chances['shield'] = settings.from_dungeon_level([[15, 8]])
 
-	# num_monsters = tcod.random_get_int(0, 0, max_monsters)
-	num_monsters = 1
+	num_monsters = tcod.random_get_int(0, 0, max_monsters)
 
 	for i in range(num_monsters):
 		x = tcod.random_get_int(0, room.x1 + 1, room.x2 - 1)
@@ -42,7 +41,7 @@ def place_objects(room):
 				profession_component = Profession.Profession(profession='orc')
 				combatant_component = Combatant(xp=35, level=1, death_function=monster_death,
 					profession=profession_component)
-				monster = Object(x, y, 'o', 'sir orkington', tcod.desaturated_green, blocks=True, combatant=combatant_component,
+				monster = Object(x, y, 'o', 'orc', tcod.desaturated_green, blocks=True, combatant=combatant_component,
 					ai=ai_component)
 			elif choice == 'troll':
 				profession_component = Profession.Profession(profession='troll')

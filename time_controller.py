@@ -2,9 +2,17 @@ import settings
 
 
 def advance_time():
+	end_player_turn()
+
+
+def end_player_turn():
+	counter = settings.player.combatant.speed_value
 	for obj in settings.objects:
 		if obj.ai:
-			obj.ai.take_turn()
+			while obj.combatant.current_speed < counter:
+				obj.ai.take_turn()
+				obj.combatant.current_speed += obj.combatant.speed_value
+			obj.combatant.current_speed -= counter
 		if obj.combatant:
 			for ability in obj.combatant.abilities:
 				ability.advance_cooldown_timer()

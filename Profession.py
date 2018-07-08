@@ -13,6 +13,7 @@ class Profession:
 		self.intel = self.profession_component[2]
 		self.con = self.profession_component[3]
 		self.hit_dice = self.profession_component[5]
+		self.speed = self.profession_component[6]
 
 	# Creates class instances of new abilities, pulled from a class dictionary file
 	# Users only have those skills for which they have achieved the proper level

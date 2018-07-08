@@ -45,7 +45,7 @@ CHARACTER_SCREEN_WIDTH = 30
 # Parameters for dungeon generator
 ROOM_MAX_SIZE = 18
 ROOM_MIN_SIZE = 6
-MAX_ROOMS = 1
+MAX_ROOMS = 40
 
 # Spells
 HEAL_AMOUNT = 40
