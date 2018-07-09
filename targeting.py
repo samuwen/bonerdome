@@ -21,30 +21,57 @@ def is_target_valid(x, y, max_range=None):
 	return False
 
 
+def get_valid_target(user, target, max_range):
+	if target:
+		print("Returning valid target")
+		return target
+	target = user.combatant.get_target(max_range)
+	if target is None:
+		return None
+	if user.distance_to(target) > max_range:
+		message(target.name.capitalize() + " is too far! Get closer or select a new target", tcod.red)
+		return None
+	return target
+
+
 def choose_target(max_range):
 	global target
-	if target is None:
-		while True:
-			tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS | tcod.EVENT_MOUSE, settings.key, settings.mouse)
-			try:
-				is_direction = settings.keycode_to_direction_tuple_map[settings.key.vk]
-			except KeyError:
-				is_direction = None
+	while target is None:
+		tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS | tcod.EVENT_MOUSE, settings.key, settings.mouse)
+		try:
+			is_direction = settings.keycode_to_direction_tuple_map[settings.key.vk]
+		except KeyError:
+			is_direction = None
 
-			result = looking_input('target', direction_keys=is_direction, max_range=max_range)
-			handle_rendering_tasks()
-			# returns a clicked monster in FOV up to a specific range
+		result = looking_input('target', direction_keys=is_direction, max_range=max_range)
+		handle_rendering_tasks()
+		# returns a clicked monster in FOV up to a specific range
 
-			if result == 'target_selected':
-				(x, y) = settings.selection_coordinates
+		if result == 'target_selected':
+			(x, y) = settings.selection_coordinates
 
-				for obj in settings.objects:
-					if obj.x == x and obj.y == y and obj.combatant and obj != settings.player:
-						return obj
-			elif result == 'exit':
-				return None
-	else:
-		return target
+			for obj in settings.objects:
+				if obj.x == x and obj.y == y and obj.combatant and obj != settings.player:
+					return obj
+		elif result == 'exit':
+			return None
+	return target
+
+
+def prompt_user_for_direction():
+	keypress = None
+	message("Press a direction key or escape to cancel", tcod.white)
+	while keypress is None:
+		tcod.sys_check_for_event(tcod.EVENT_KEY_PRESS | tcod.EVENT_MOUSE, settings.key, settings.mouse)
+		try:
+			is_direction = settings.keycode_to_direction_tuple_map[settings.key.vk]
+			return is_direction
+		except KeyError:
+			pass
+		handle_rendering_tasks()
+
+		if settings.key.vk == tcod.KEY_ESCAPE:
+			return None
 
 
 def combatant_is_adjacent(x, y):
@@ -57,11 +84,20 @@ def combatant_is_adjacent(x, y):
 
 
 def is_attack_from_behind(user, target):
+	'''
+	checks if a combatant is behind a target.
+	grabs the direction the target is facing, grabs the direction of the attack,
+	then checks if the facing direction is included in the attack direction
+	(ie: south east handles any attack that goes south, east, or south east)
+	'''
+
 	direction = target.combatant.direction
 	attack_direction = user.combatant.get_direction_to_target(target)
 
-	if direction == attack_direction:
-		return True
+	dir_list = attack_direction.split()
+	for dir in dir_list:
+		if direction.find(dir) > -1:
+			return True
 	return False
 
 
@@ -100,13 +136,13 @@ def get_direction_from_coordinates(x, y):
 	elif y > 0 and x == 0:
 		return 'south'
 	elif x < 0 and y < 0:
-		return 'northwest'
+		return 'north west'
 	elif x > 0 and y < 0:
-		return 'northeast'
+		return 'north east'
 	elif x < 0 and y > 0:
-		return 'southwest'
+		return 'south west'
 	elif x > 0 and y > 0:
-		return 'southeast'
+		return 'south east'
 
 
 def get_coordinates_from_direction(direction):
@@ -118,11 +154,11 @@ def get_coordinates_from_direction(direction):
 		return (0, -1)
 	elif direction == 'south':
 		return (0, 1)
-	elif direction == 'northwest':
+	elif direction == 'north west':
 		return (-1, -1)
-	elif direction == 'northeast':
+	elif direction == 'north east':
 		return (1, -1)
-	elif direction == 'southwest':
+	elif direction == 'south west':
 		return (-1, 1)
-	elif direction == 'southeast':
+	elif direction == 'south east':
 		return (1, 1)

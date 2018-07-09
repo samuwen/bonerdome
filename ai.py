@@ -13,7 +13,9 @@ class BasicMonster:
 			if monster.distance_to(settings.player) >= 2:
 				monster.move_astar(settings.player)
 			elif settings.player.combatant.hp > 0:
+				monster.combatant.set_target(target=settings.player)
 				monster.combatant.attack(settings.player)
+				monster.combatant.set_direction(settings.player.x, settings.player.y)
 
 
 class ConfusedMonster:

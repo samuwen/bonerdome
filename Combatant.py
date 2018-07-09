@@ -54,6 +54,8 @@ class Combatant:
 	def attack(self, target, behind_target=False):
 		if behind_target is True:
 			return self.backstab(target)
+		dir = self.get_direction_to_target(target)
+		self.set_direction(direction=dir)
 		to_hit = roll_to_hit()
 		if to_hit > target.combatant.defense:
 			damage = self.power - target.combatant.damage_modifier
@@ -162,7 +164,10 @@ class Combatant:
 		self._base_max_hp += number
 		self.profession.get_abilities_for_level()
 
-	def set_target(self, max_range=999):
+	def set_target(self, target=None, max_range=999):
+		if target:
+			self.target = target
+			return
 		self.target = targeting.select_target(max_range=max_range)
 		settings.highlight_state = 'play'
 		if self.target != 'cancelled':

@@ -14,3 +14,5 @@ def end_player_turn():
 				ability.advance_cooldown_timer()
 		if obj.combatant and obj.combatant.target:
 			obj.combatant.direction = obj.combatant.get_direction_to_target(obj.combatant.target)
+		if obj.combatant and obj.combatant.target and not obj.combatant.target.combatant:
+			obj.combatant.clear_target()

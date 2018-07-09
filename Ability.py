@@ -17,18 +17,18 @@ class Ability:
 		self.fail_message = fail_message
 		self.max_range = max_range
 
-	def use(self, user, target, max_range):
+	def use(self, user):
 		if self.use_function is None:
 			message(self.owner.name + " cannot be used!", tcod.light_red)
 		elif self.current_cooldown_time != 0:
 			message("You're too tired to use that ability!")
 		else:
-			result = self.use_function(user, target, max_range, self.damage, self.distance)
+			result = self.use_function(user, user.combatant.target, self.max_range, self.damage, self.distance)
 			if result == 'fail':
-				message(self.fail_message, tcod.light_red)
+				message(self.fail_message + user.combatant.target.name.capitalize(), tcod.light_red)
 			elif result == 'success':
 				self.current_cooldown_time = self.cooldown_time
-				message(self.succ_message, tcod.light_green)
+				message(self.succ_message + user.combatant.target.name.capitalize(), tcod.light_green)
 
 	def advance_cooldown_timer(self):
 		if self.current_cooldown_time < 0:

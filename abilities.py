@@ -1,12 +1,13 @@
 import ai
-import input_controller
 import libtcodpy as tcod
 import settings
 
 from menu import msgbox
 from message import message
 from targeting import get_coordinates_from_direction
+from targeting import get_valid_target
 from targeting import handle_basic_targeting
+from targeting import prompt_user_for_direction
 from time_controller import end_player_turn
 from utilities import add_tuples
 
@@ -73,7 +74,7 @@ def cast_fireball():
 def smash(player, target, max_range):
 	distance = 1
 	damage = 20
-	direction = input_controller.prompt_user_for_direction()
+	direction = prompt_user_for_direction()
 	if direction == (0, 0) or type(direction) is not tuple:
 		return 'fail'
 	targets = fire_beam_in_direction((settings.player.x, settings.player.y), direction, distance)
@@ -95,27 +96,27 @@ def fire_beam_in_direction(start_location, direction, distance):
 	return affected_list
 
 
-def backflip(user, target=None, max_range=None, damage=None, distance=None):
-	target = user.combatant.get_target(max_range)
-	if target is None:
+def backflip(user, target, max_range, damage, distance):
+	tar = get_valid_target(user, target, max_range)
+	if tar is None:
 		return 'cancelled'
 	# get the direction that, if the user keeps on that line, will move them 2 directly back from the target
-	direction = target.combatant.get_direction_to_target(user)
-	(x, y) = user.combatant.get_coordinates_from_direction(direction)
+	direction = tar.combatant.get_direction_to_target(user)
+	(x, y) = get_coordinates_from_direction(direction)
 	for i in range(distance):
 		user.move(x, y)
 	end_player_turn()
 	return 'success'
 
 
-def frontflip(user, target=None, max_range=None, damage=None, distance=None):
-	target = user.combatant.get_target(max_range)
-	if target is None:
+def frontflip(user, target, max_range, damage, distance):
+	tar = get_valid_target(user, target, max_range)
+	if tar is None:
 		return 'cancelled'
-	direction = user.combatant.get_direction_to_target(target)
+	direction = user.combatant.get_direction_to_target(tar)
 	(x, y) = get_coordinates_from_direction(direction)
 	for i in range(distance):
 		user.x += x
 		user.y += y
-	user.combatant.direction = user.combatant.get_direction_to_target(target)
+	user.combatant.direction = user.combatant.get_direction_to_target(tar)
 	return 'success'

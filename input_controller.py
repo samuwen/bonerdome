@@ -13,6 +13,7 @@ from menu import inventory_menu
 from message import message
 from targeting import combatant_is_adjacent
 from targeting import is_attack_from_behind
+from targeting import prompt_user_for_direction
 from time_controller import end_player_turn
 from utilities import add_tuples
 
@@ -56,7 +57,7 @@ def playing_input():
 		if chosen_ability is not None:
 			for ability in settings.player.combatant.abilities:
 				if ability == chosen_ability:
-					ability.use(settings.player, None, ability.max_range)
+					ability.use(settings.player)
 	if key_char == 'd':
 		chosen_item = inventory_menu("Press the letter next to the item to drop it.\n")
 		if chosen_item is not None:
@@ -119,17 +120,6 @@ def player_move_or_attack(dx, dy):
 	settings.player.combatant.set_direction(dx, dy)
 
 
-def prompt_user_for_direction():
-	keypress = tcod.console_wait_for_keypress(True)
-	if keypress.vk not in settings.keycode_to_direction_tuple_map:
-		message("Aborted")
-		return None
-	direction = settings.keycode_to_direction_tuple_map[keypress.vk]
-	if type(direction) is not tuple:
-		return None
-	return direction
-
-
 def is_key_pressed():
 	if settings.key.vk != tcod.KEY_NONE and settings.key.pressed:
 		return True
@@ -137,6 +127,9 @@ def is_key_pressed():
 
 
 def run_in_direction(direction):
+	if direction is None:
+		settings.game_state = 'playing'
+		return
 	in_room = is_in_room(settings.player.x, settings.player.y)
 	at_vertex = is_at_vertex(settings.player.x, settings.player.y)
 	current_location = (settings.player.x, settings.player.y)

@@ -8,8 +8,8 @@ ability = {
 		'name': 'smash',
 		'damage': 20,
 		'cooldown_time': 5,
-		'succ_message': "smashed enemy",
-		'fail_message': 'failed to smash enemy',
+		'succ_message': "smashed ",
+		'fail_message': 'failed to smash ',
 		'max_range': 1
 	},
 	'confuse': {
@@ -19,8 +19,8 @@ ability = {
 		'name': 'confuse',
 		'damage': 0,
 		'cooldown_time': 5,
-		'succ_message': "confused enemy",
-		'fail_message': 'failed to confuse enemy',
+		'succ_message': "confused ",
+		'fail_message': 'failed to confuse ',
 		'max_range': 8
 	},
 	'hold_person': {
@@ -30,8 +30,8 @@ ability = {
 		'name': 'hold position',
 		'damage': 0,
 		'cooldown_time': 5,
-		'succ_message': "held enemy",
-		'fail_message': 'failed to hold enemy',
+		'succ_message': "held ",
+		'fail_message': 'failed to hold ',
 		'max_range': 6
 	},
 	'backflip': {
@@ -41,8 +41,8 @@ ability = {
 		'name': 'backflip',
 		'damage': 0,
 		'cooldown_time': 10,
-		'succ_message': 'performed a backflip',
-		'fail_message': 'failed to backflip',
+		'succ_message': 'performed a backflip away from ',
+		'fail_message': 'failed to backflip away from ',
 		'max_range': 1.5
 	},
 	'frontflip': {
@@ -52,8 +52,8 @@ ability = {
 		'name': 'flip over',
 		'damage': 0,
 		'cooldown_time': 10,
-		'succ_message': 'flipped over enemy',
-		'fail_message': 'failed to flip',
+		'succ_message': 'flipped over ',
+		'fail_message': 'failed to flip over ',
 		'max_range': 1.5
 	}
 }
